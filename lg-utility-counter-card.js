@@ -300,10 +300,7 @@ class LGUtilityCounterCard extends HTMLElement {
           name: "",
           schema: [
             { name: "name", selector: { text: {} } },
-			{ name: "digits_number", selector: { number: {
-				min: 0,
-				max: 10
-			} } },
+			{ name: "digits_number", selector: { number: {} } },
             {
               name: "icon",
               selector: {
