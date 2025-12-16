@@ -287,9 +287,9 @@ class LGUtilityCounterCard extends HTMLElement {
     }
 
     // configuration defaults
-    /*static getStubConfig() {
-        return { entity: "input_boolean.tcvj" }
-    }*/
+    static getStubConfig() {
+        return { entity: "sun.sun" }
+    }
 
 }
 
