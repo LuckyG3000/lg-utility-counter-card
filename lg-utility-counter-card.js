@@ -11,21 +11,20 @@ class LGUtilityCounterCard extends HTMLElement {
     constructor() {
         super();
         //console.log("LGUtilityCounterCard.constructor()")
-		this._config = config;
         this.doStyle();
         this.doCard();
     }
 
     setConfig(config) {
         //console.log("LGUtilityCounterCard.setConfig()")
-        //this._config = config;
+        this._config = config;
         if (!this._isAttached) {
             this.doAttach();
             this.doQueryElements();
             this.doListen();
             this._isAttached = true;
         }
-        this.doCheckConfig();
+        this.doCheckConfig();_confi
         this.doUpdateConfig();
     }
 
@@ -201,6 +200,11 @@ class LGUtilityCounterCard extends HTMLElement {
     doCard() {
         this._elements.card = document.createElement("ha-card");
         
+		setConfig(config) {
+        //console.log("LGUtilityCounterCard.setConfig()")
+        	this._config = config;
+		}
+			
 		var html_content = `
 			<div class="card-content">
 				<p class="lguc-error lguc-error--hidden">
