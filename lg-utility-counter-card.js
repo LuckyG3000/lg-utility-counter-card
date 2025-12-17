@@ -21,13 +21,13 @@ class LGUtilityCounterCard extends HTMLElement {
     // lifecycle
 	constructor() {
         super();
-        console.log("LGUtilityCounterCard.constructor()")
+        //console.log("LGUtilityCounterCard.constructor()")
         this.doStyle();
         this.doCard();
     }
     
     setConfig(config) {
-        console.log("LGUtilityCounterCard.setConfig()")
+        //console.log("LGUtilityCounterCard.setConfig()")
         this._config = config;
         if (!this._isAttached) {
             this.doAttach();
@@ -272,17 +272,12 @@ class LGUtilityCounterCard extends HTMLElement {
 			var total_digits = total_digits_left + total_digits_right;
 		
 			var cntr_val = this.getState().state;
-			console.log("1: " + cntr_val);
-
+			
 			var cntr_str_left = String(parseInt(cntr_val)).padStart(total_digits_left, '0');	//add leading zeros
 			cntr_str_left = cntr_str_left.slice(-total_digits_left);		// cut the beginning of the string if it's longer than required number of digits
-			console.log("2: " + String(cntr_val - parseInt(cntr_val)));
 			var cntr_str_right = String(cntr_val - parseInt(cntr_val)).slice(2, 2 + total_digits_right).padEnd(total_digits_right, '0');
 			
 			var cntr_str = cntr_str_left + cntr_str_right;
-			console.log(cntr_str_left);
-			console.log(cntr_str_right);
-			console.log(cntr_str);
 			var dig_val;
 			
 			for (var d = 0; d < total_digits; d++) {
@@ -337,10 +332,10 @@ class LGUtilityCounterCard extends HTMLElement {
       ],
       computeLabel: (schema) => {
         if (schema.name === "icon") return "Special Icon";
-		if (schema.name === "unit") {
+		/*if (schema.name === "unit") {
 			const unitOfMeasurement = this.getState().attributes.unit_of_measurement;
 			return unitOfMeasurement;
-		}
+		}*/
         return undefined;
 		
 		  
