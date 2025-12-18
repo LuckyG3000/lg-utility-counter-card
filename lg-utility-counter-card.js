@@ -431,7 +431,7 @@ class LGUtilityCounterCard extends HTMLElement {
           case "entity":
             return "This text describes the function of the entity selector";
           case "unit":
-            return "The unit of measurement for this card";
+            return "The unit of measurement for this card. (0 = hide unit)";
 		  case "digits_number":
             return "The number of digits to the left of decimal point. (0 - 10, 0 = auto)";
 		  case "decimals_number":
