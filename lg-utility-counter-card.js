@@ -113,23 +113,7 @@ class LGUtilityCounterCard extends HTMLElement {
             .lguc-error--hidden {
                 display: none;
             }
-            .lguc-dl {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-            .lguc-dl--hidden {
-                display: none;
-            }
-            .lguc-dt {
-                display: flex;
-                align-content: center;
-                flex-wrap: wrap;
-            }
-            .lguc-dd {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, auto) minmax(0, 2fr));
-                margin: 0;
-            }
+            
 			.lg-utility-counter-main-div {
 				display: inline-block;
 				vertical-align: middle;
@@ -267,6 +251,7 @@ class LGUtilityCounterCard extends HTMLElement {
         //this._elements.toggle = card.querySelector(".tcvj-toggle")
         //this._elements.value = card.querySelector(".tcvj-value")
 
+		this._elements.main_div = card.querySelector(".lg-utility-counter-main-div");
 		this._elements.digit_window = card.querySelectorAll(".lg-utility-counter-digit-window");
 		this._elements.digit = card.querySelectorAll(".lg-utility-counter-digit-text");
 		this._elements.redbg = card.querySelector(".lg-utility-counter-red-bg");
@@ -351,7 +336,7 @@ class LGUtilityCounterCard extends HTMLElement {
 
 			var ts = Math.floor(Date.now() / 1000);
 			var random_pos = false;
-			if (this._elements.lu.innerHTML < ts - 30 || this._elements.lu.innerHTML == '') {
+			if (this._elements.lu.innerHTML < ts - 60 || this._elements.lu.innerHTML == '') {
 				random_pos = true;
 				this._elements.lu.innerHTML = ts;
 			}
@@ -360,8 +345,10 @@ class LGUtilityCounterCard extends HTMLElement {
 				dig_val = cntr_str.substring(d, d + 1);
 				this._elements.digit[d].innerHTML = dig_val;
 				this._elements.digit_window[d].style.display = "inline-block";
-				if (random_pos) {
+				if (random_pos && this._config.random_shift) {
 					this._elements.digit_window[d].style.top = Math.round(Math.random() * 2 - 1) + "px";
+				} else {
+					this._elements.digit_window[d].style.top = 0;
 				}
 			}
 			//hide the rest of digits
@@ -397,6 +384,10 @@ class LGUtilityCounterCard extends HTMLElement {
 			} else {
 				this._elements.icon.style.display = "none";
 			}
+
+			if (this._config.plate_color != undefined) {
+				this._elements.main_div.style.background-color = this._config.plate_color;
+			}
 			
             this._elements.error.classList.add("lguc-error--hidden");
             //this._elements.dl.classList.remove("lguc-dl--hidden");
@@ -422,6 +413,7 @@ class LGUtilityCounterCard extends HTMLElement {
 		{ name: "digits_number", selector: { number: { min: 0, max: 10, step: 1, mode: "slider" } } },
 		{ name: "decimals_number", selector: { number: { min: 0, max: 5, step: 1, mode: "slider" } } },
 		{ name: "decimal_separator", selector: { select: { mode: "list", options: ["Point", "Comma"] } } },
+		{ name: "random_shift", selector: { boolean: {} } },
 		{ name: "offset", selector: { number: { step: "any", mode: "box" } } },
         {
             name: "icon",
@@ -433,6 +425,7 @@ class LGUtilityCounterCard extends HTMLElement {
             },
         },
         { name: "unit", selector: { text: {} } },
+		{ name: "plate_color", selector: { color_rgb: {} } },
         { name: "theme", selector: { theme: {} } },
       ],
       computeLabel: (schema) => {
@@ -453,6 +446,8 @@ class LGUtilityCounterCard extends HTMLElement {
             return "The number of digits to the right of decimal point. (0 - 5, 0 = auto)";
 		  case "offset":
             return "This value will be added to entity's value. If negative, it will be subtracted.";
+		  case "random_shift":
+            return "Shift digits vertically randomly by ±1px, to get a more realistic look.";
         }
         return undefined;
       },
