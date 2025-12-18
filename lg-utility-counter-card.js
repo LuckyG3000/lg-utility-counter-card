@@ -392,7 +392,7 @@ class LGUtilityCounterCard extends HTMLElement {
 				var plate_rgb = this._config.plate_color;	//array with 3 elements
 				var rgb_css = "rgb(" + plate_rgb[0] + "," + plate_rgb[1] + ","+ plate_rgb[2] + ")";
 				console.log("RGB CSS: " + rgb_css);
-				this._elements.main_div.style.background-color = rgb_css;
+				this._elements.main_div.style.backgroundColor = rgb_css;
 				console.log(this._config.plate_color);
 			}
 			
