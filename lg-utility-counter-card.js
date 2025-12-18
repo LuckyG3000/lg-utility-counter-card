@@ -249,7 +249,7 @@ class LGUtilityCounterCard extends HTMLElement {
 		this._elements.digit = card.querySelectorAll(".lg-utility-counter-digit-text");
 		this._elements.redbg = card.querySelector(".lg-utility-counter-red-bg");
 		this._elements.greybg = card.querySelector(".lg-utility-counter-grey-bg");
-		this._elements.dp = card.querySelector(".lg-utility-counter-decimal-point");
+		this._elements.dp = card.querySelector("#lg-utility-counter-decimal-point");
 		
     }
 
