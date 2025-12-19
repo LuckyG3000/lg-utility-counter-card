@@ -10,8 +10,7 @@ function isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
-//loadCSS("https://fonts.googleapis.com/css?family=Gloria+Hallelujah");
-loadCSS("https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400&display=swap");
+
 
 class LGUtilityCounterCard extends HTMLElement {
 
@@ -392,6 +391,8 @@ class LGUtilityCounterCard extends HTMLElement {
 				this._elements.main_div.style.backgroundColor = rgb_css;
 			}
 			
+			loadCSS("https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400&display=swap");
+			
             this._elements.error.classList.add("lguc-error--hidden");
             //this._elements.dl.classList.remove("lguc-dl--hidden");
         }
@@ -428,7 +429,8 @@ class LGUtilityCounterCard extends HTMLElement {
             },
         },
         { name: "unit", selector: { text: {} } },
-		{ name: "plate_color", selector: { color_rgb: {} } },
+		{ name: "colors", selector: { select: { mode: "list", options: ["Default", "User defined"] } } },
+		{ name: "plate_color", enabled: false, selector: { color_rgb: {} } },
         { name: "theme", selector: { theme: {} } },
       ],
       computeLabel: (schema) => {
