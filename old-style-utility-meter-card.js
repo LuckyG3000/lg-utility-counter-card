@@ -430,7 +430,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
         },
         { name: "unit", selector: { text: {} } },
 		{ name: "colors", selector: { select: { mode: "list", options: ["Default", "User defined"] } } },
-		{ name: "plate_color", enabled: false, selector: { color_rgb: {} } },
+		{ name: "plate_color", disabled: true, selector: { color_rgb: {} } },
         { name: "theme", selector: { theme: {} } },
       ],
       computeLabel: (schema) => {
