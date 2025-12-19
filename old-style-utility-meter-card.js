@@ -404,12 +404,12 @@ class OldStyleUtilityMeterCard extends HTMLElement {
     }*/
 
 	static getConfigForm() {
-	var col_disabled = false;
+	/*var col_disabled = false;
 	if (this._config.colors != undefined) {
 		if (this._config.colors == 'User defined') {
 			col_disabled = true;
 		}
-	}
+	}*/
     var sch = {
       schema: [
         { name: "entity", required: true, selector: { entity: {} } },
@@ -430,7 +430,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
         },
         { name: "unit", selector: { text: {} } },
 		{ name: "colors", selector: { select: { mode: "list", options: ["Default", "User defined"] } } },
-		{ name: "plate_color", disabled: col_disabled, selector: { text: {} } },
+		{ name: "plate_color", disabled: false, selector: { text: {} } },
 		{ name: "decimal_plate_color", selector: { text: {} } },
 		{ name: "unit_plate_color", selector: { text: {} } },
 		{ name: "unit_color", selector: { text: {} } },
@@ -467,6 +467,10 @@ class OldStyleUtilityMeterCard extends HTMLElement {
         if (config.other_option) {
           throw new Error("'other_option' is unexpected.");
         }
+		
+		if (config.colors == 'User defined') {
+			config.plate_color.disabled = true;
+		}
       },
     };
 	
