@@ -1,6 +1,10 @@
-# lguc
+# Old Style Utility Meter Card for Home Assistant
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
-LG Utility Counter Card for HA
+Old Style Utility Meter Card for Home Assistant
 
-Customizable Utility Counter Card based on classic utility meters with rotating digits.
+Customizable Utility Meter Card based on old style (non digital) utility meter box with rotating digits.
+This picture does a better job than describing it with words:
+
+
+
