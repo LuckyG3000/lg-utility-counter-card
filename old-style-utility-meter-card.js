@@ -378,10 +378,18 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			
 			var total_digits = digits_left + digits_right;
 			
+			if (total_digits > 0) {
+				this._elements.main_div.style.display = "inline-block";
+			} else {
+				this._elements.main_div.style.display = "none";
+			}
+			
 			l_str = l_str.padStart(digits_left, '0');	//add leading zeros
 			l_str = l_str.slice(-digits_left);		// cut the beginning of the string if it's longer than required number of digits
-			r_str = r_str.padEnd(digits_right, '0');
-
+			if (digits_right > 0) {
+				r_str = r_str.padEnd(digits_right, '0');
+			}
+			
 			if (r_str.length > digits_right) {	//do rounding
 			  r_str = String(Math.round(parseInt(r_str) / Math.pow(10, r_str.length - digits_right)));
 			}
@@ -619,20 +627,8 @@ class OldStyleUtilityMeterCard extends HTMLElement {
         if (config.other_option) {
           throw new Error("'other_option' is unexpected.");
         }
-		
-		if (config.whole_digit_number == '' || config.whole_digit_number == undefined) {
-			config.whole_digit_number = 0;
-		}
-		
-		if (config.decimal_digit_number == '' || config.decimal_digit_number == undefined) {
-			config.decimal_digit_number = 0;
-		}
-			
-		if ((config.whole_digit_number + config.decimal_digit_number) == 0) {
-          config.whole_digit_number = 0;
-		  //throw new Error("At least one digit must be shown");
-        }
-		
+					
+	
 		if (config.colors == 'Default') {
 			//config.plate_color.disabled = true;
 			var w = getSchIndex(sch, 'plate_color');
