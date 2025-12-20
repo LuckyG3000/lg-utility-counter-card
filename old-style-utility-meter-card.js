@@ -214,17 +214,18 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				height: 1px;
 				left: 12px;
 				border-top: 1px solid #FFF;
-				top: 0px;
+				top: 2px;
 				margin-top: 1px;
 			}
 
 			.osumc-line_cont > :nth-child(1) {
 				opacity: 0.15;
-				width: 4px;
+				width: 3px;
 			}
 
 			.osumc-line_cont > :nth-child(2) {
 				opacity: 0.30;
+				width: 4px;
 			}
 
 			.osumc-line_cont > :nth-child(3) {
@@ -251,11 +252,12 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			
 			.osumc-line_cont > :nth-child(8) {
 				opacity: 0.3;
+				width: 4px;
 			}
 			
 			.osumc-line_cont > :nth-child(9) {
 				opacity: 0.15;
-				width: 4px;
+				width: 3px;
 			}
 
 			#osumc-last-update {
