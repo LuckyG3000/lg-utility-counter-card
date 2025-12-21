@@ -1,6 +1,8 @@
 {
   "name": "Old Style Utility Meter Card",
   "render_readme": true,
-  "filename": "old-style-utility-meter-card.js"
-  "content_in_root": true
+  "filename": "old-style-utility-meter-card.js",
+  "content_in_root": true,
+  "homeassistant": "2025.1.0",
+  "hacs": "2.0.0"
 }
