@@ -156,7 +156,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			}
 
 			.osumc-digit-text {
-				background-image: linear-gradient(rgba(64,64,64,1), #aaa, rgba(64,64,64,1));
+				background-image: linear-gradient(rgba(128,128,128,0.75), #aaa, rgba(128,128,128,0.75));
 				color: transparent;
 				background-clip: text;
 				width: 17px;
