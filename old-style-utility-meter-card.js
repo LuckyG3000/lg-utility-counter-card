@@ -216,7 +216,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				width: 5px;
 				height: 1px;
 				left: 12px;
-				border-top: 1px solid #FFF;
+				border-top: 1px solid;
 				top: 2px;
 				margin-top: 1px;
 			}
