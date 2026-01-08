@@ -91,6 +91,22 @@ class OldStyleUtilityMeterCard extends HTMLElement {
         const friendlyName = this.getAttributes().friendly_name;
         return friendlyName ? friendlyName : this.getEntityID();
     }
+	
+	// The height of your card. Home Assistant uses this to automatically
+	// distribute all cards over the available columns in masonry view
+	getCardSize() {
+		return 3;
+	}
+
+	// The rules for sizing your card in the grid in sections view
+	getGridOptions() {
+		return {
+			rows: 3,
+			columns: 6,
+			min_rows: 3,
+			max_rows: 3,
+		};
+	}
 
 
     // jobs
