@@ -815,6 +815,15 @@ class OldStyleUtilityMeterCard extends HTMLElement {
           throw new Error("'other_option' is unexpected.");
         }
 		
+		if (!config.entity || typeof config.entity !== "string") {
+			throw new Error('Configuration error: "entity" must be a non-empty string.');
+		}
+		
+		if (config.speed_range_low !== undefined && isNaN(Number(config.speed_range_low))) {
+			throw new Error('Configuration error: "speed_range_low" must be a valid number.');
+		}
+		
+		
 		var w = getSchIndex(sch, 'decimal_separator');
 		if (config.decimal_digit_number == 0) {
 			sch.schema[w].disabled = true;
@@ -826,9 +835,10 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 		if (config.show_wheel == false) {
 			w = getSchIndex(sch, 'speed_control_mode');
 			sch.schema[w].disabled = true;
-			sch.schema[w].hidden = true;
+			sch.schema[w].visible = false;
 			w = getSchIndex(sch, 'wheel_speed');
 			sch.schema[w].disabled = true;
+			sch.schema[w].hide = true;
 			w = getSchIndex(sch, 'power_entity');
 			sch.schema[w].disabled = true;
 			w = getSchIndex(sch, 'speed_range_low');
