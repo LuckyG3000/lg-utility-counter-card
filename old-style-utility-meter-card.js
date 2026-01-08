@@ -102,7 +102,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 	getGridOptions() {
 		return {
 			rows: 3,
-			columns: 6,
+			columns: 12,
 			min_rows: 3,
 			max_rows: 3,
 		};
@@ -121,6 +121,10 @@ class OldStyleUtilityMeterCard extends HTMLElement {
     doStyle() {
         this._elements.style = document.createElement("style");
         this._elements.style.textContent = `
+			.card-content {
+				background-color: #888;
+			}
+			
             .osumc-error {
                 text-color: red;
             }
@@ -132,6 +136,10 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				margin-bottom: 10px;
 			}
             
+			.osumc-counter-div {
+				width: 100%;
+			}
+			
 			.osumc-main-div {
 				display: inline-block;
 				vertical-align: middle;
@@ -393,45 +401,47 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				<p class="osumc-error osumc-error--hidden">
 				<br><br>
 				<div class="osumc-name"></div>
-				<div class="osumc-icon-div">
-					<ha-icon icon="mdi:flash" id="osumc-icon"></ha-icon>
-				</div>
-				<div class="osumc-main-div">
-					<div class="osumc-red-bg">
-					</div><div class="osumc-grey-bg"></div>`;
-		for (var d = 0; d < 15; d++) {
-			html_content += `<span class="osumc-digit-window">
-						<span class="osumc-digit-text" id="osumc-digit-` + d + `">0</span>
-					</span>`;
-		}
-		html_content += `
-					<div id="osumc-decimal-point"></div>
-					<div class="osumc-line_cont">
-						<div class="osumc-line"></div>
-						<div class="osumc-line"></div>
-						<div class="osumc-line"></div>
-						<div class="osumc-line"></div>
-						<div class="osumc-line"></div>
-						<div class="osumc-line"></div>
-						<div class="osumc-line"></div>
-						<div class="osumc-line"></div>
-						<div class="osumc-line"></div>
+				<div class="osumc-counter-div">
+					<div class="osumc-icon-div">
+						<ha-icon icon="mdi:flash" id="osumc-icon"></ha-icon>
 					</div>
-					<div class="osumc-wheel-window">
-						<div class="osumc-wheel-window-left">
-							<div class="osumc-wheel-window-left-border"></div>
-						</div>
-						<div class="osumc-wheel-window-border">
-							<div class="osumc-wheel">
-								<div class="osumc-wheel-marker"></div>
-							</div>
-						</div>
-						<div class="osumc-wheel-window-right">
-							<div class="osumc-wheel-window-right-border"></div>
+					<div class="osumc-main-div">
+						<div class="osumc-red-bg">
+						</div><div class="osumc-grey-bg"></div>`;
+			for (var d = 0; d < 15; d++) {
+				html_content += `<span class="osumc-digit-window">
+							<span class="osumc-digit-text" id="osumc-digit-` + d + `">0</span>
+						</span>`;
+			}
+			html_content += `
+						<div id="osumc-decimal-point"></div>
+						<div class="osumc-line_cont">
+							<div class="osumc-line"></div>
+							<div class="osumc-line"></div>
+							<div class="osumc-line"></div>
+							<div class="osumc-line"></div>
+							<div class="osumc-line"></div>
+							<div class="osumc-line"></div>
+							<div class="osumc-line"></div>
+							<div class="osumc-line"></div>
+							<div class="osumc-line"></div>
 						</div>
 					</div>
-					<div id="osumc-last-update"></div>
 				</div>
+				<div class="osumc-wheel-window">
+					<div class="osumc-wheel-window-left">
+						<div class="osumc-wheel-window-left-border"></div>
+					</div>
+					<div class="osumc-wheel-window-border">
+						<div class="osumc-wheel">
+							<div class="osumc-wheel-marker"></div>
+						</div>
+					</div>
+					<div class="osumc-wheel-window-right">
+						<div class="osumc-wheel-window-right-border"></div>
+					</div>
+				</div>
+				<div id="osumc-last-update"></div>
 			</div>
         `;
 		
@@ -447,6 +457,8 @@ class OldStyleUtilityMeterCard extends HTMLElement {
         this._elements.error = card.querySelector(".osumc-error")
 
 		this._elements.name = card.querySelector(".osumc-name");
+		
+		this._elements.counter_div = card.querySelector(".osumc-counter-div");
 		this._elements.main_div = card.querySelector(".osumc-main-div");
 		this._elements.digit_window = card.querySelectorAll(".osumc-digit-window");
 		this._elements.digit = card.querySelectorAll(".osumc-digit-text");
