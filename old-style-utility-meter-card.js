@@ -265,6 +265,104 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				opacity: 0.15;
 				width: 3px;
 			}
+			
+			
+			.osumc-wheel-window {
+				width: 90%;
+				height: 17px;
+				background-color: #555;
+				margin-top: 10px;
+				text-align: center;
+				display: block;
+				font-size: 0;
+			}
+
+			.osumc-wheel-window-border {
+				display: inline-block;
+				width: 90%;
+				height: 9px;
+				position: relative;
+				top: -10px;
+				background-color: #000;
+			}
+
+			.osumc-wheel-window-left,
+			.osumc-wheel-window-right {
+				display: inline-block;
+				width: 5%;
+				background-color: #555;
+				height: 100%;
+				position: relative;
+				z-index: 1;
+			}
+
+			.osumc-wheel-window-left {
+				text-align: right;
+			}
+
+			.osumc-wheel-window-left-border,
+			.osumc-wheel-window-right-border {
+				display: block;
+				position: relative;
+				height: 9px;
+				background-color: #000;
+				width: 3px;
+				top: 4px;
+			}
+
+			.osumc-wheel-window-left-border {
+				border-start-start-radius: 2px;
+				border-end-start-radius: 2px;
+				right: 0;
+				margin-right: 0;
+				margin-left: auto;
+			}
+
+			.osumc-wheel-window-right-border {
+				border-start-end-radius: 2px;
+				border-end-end-radius: 2px;
+			}
+
+			.osumc-wheel {
+				height: 3px;
+				background-image: linear-gradient(to right, #111 -5%, #aaa 50%, #111 105%);
+				width: 100%;
+				display: inline-block;
+				position: relative;
+				top: 3px;
+			}
+
+			.osumc-wheel-marker {
+				background-color: red;
+				width: 30px;
+				margin-left: -15px;
+				height: 100%;
+				position: relative;
+				left: 50px;
+				
+				animation-name: osumc-wheel-animation;
+				animation-duration: 2s;
+				animation-iteration-count: infinite;
+				animation-timing-function: linear;
+				
+			}
+
+			@keyframes osumc-wheel-animation {
+				0% {left: -2%; width: 10px; margin-left: -5px; opacity: 0.3}
+				7% {left: 7%; width: 22px; margin-left: -10px; opacity: 0.6}
+				13% {left: 20%; width: 27px; margin-left: -13px;}
+				19% {left: 36%; width: 29px; margin-left: -14px;}
+				25% {left: 50%; width: 30px; margin-left: -15px; opacity: 1}
+				31% {left: 64%; width: 29px; margin-left: -14px;}
+				37% {left: 80%; width: 27px; margin-left: -13px;}
+				43% {left: 93%; width: 22px; margin-left: -11px; opacity: 0.6}
+				50% {left: 102%; width: 12px; margin-left: -6px; opacity: 0.3}
+				51% {opacity: 0}
+				100% {opacity: 0;}
+			}
+			
+			
+			
 
 			#osumc-last-update {
 				display: none;
@@ -303,6 +401,19 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 						<div class="osumc-line"></div>
 						<div class="osumc-line"></div>
 					</div>
+					<div class="osumc-wheel-window">
+						<div class="osumc-wheel-window-left">
+							<div class="osumc-wheel-window-left-border"></div>
+						</div>
+						<div class="osumc-wheel-window-border">
+							<div class="osumc-wheel">
+								<div class="osumc-wheel-marker"></div>
+							</div>
+						</div>
+						<div class="osumc-wheel-window-right">
+							<div class="osumc-wheel-window-right-border"></div>
+						</div>
+					</div>
 					<div id="osumc-last-update"></div>
 				</div>
 			</div>
@@ -328,6 +439,10 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 		this._elements.dp = card.querySelector("#osumc-decimal-point");
 		this._elements.icon = card.querySelector("#osumc-icon");
 		this._elements.markings = card.querySelector(".osumc-line_cont");
+		
+		this._elements.wheel_window = card.querySelector(".osumc-wheel-window");
+		this._elements.wheel_marker = card.querySelector(".osumc-wheel-marker");
+		
 		this._elements.lu = card.querySelector("#osumc-last-update");
     }
 
@@ -572,6 +687,19 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				this._elements.markings.style.color = this._config.markings_color;
 			}
 			
+			if (this._config.show_wheel) {
+				this._elements.wheel-window.style.display = "block";
+				if (this._config.speed_control_mode == 'Fixed') {
+					this._elements.wheel-marker.style.animation-duration = this._config.wheel_speed;
+				} else {
+					
+				}
+			} else {
+				this._elements.wheel-window.style.display = "none";
+			}
+			
+			
+			
             this._elements.error.classList.add("osumc-error--hidden");
         }
     }
@@ -616,6 +744,14 @@ class OldStyleUtilityMeterCard extends HTMLElement {
             },
         },
         { name: "unit", selector: { text: {} } },
+		
+		{ name: "show_wheel", selector: { boolean: {} } },
+		{ name: "speed_control_mode", selector: { select: { mode: "list", options: ["Fixed", "Power"] } } },
+		{ name: "wheel_speed", selector: { number: { min: 0.1, max: 20, step: 0.1, mode: "slider" } } },
+		{ name: "power_entity", selector: { entity: {} } },
+		{ name: "speed_range_low", selector: { number: { mode: "box" } } },
+		{ name: "speed_range_high", selector: { number: { mode: "box" } } },
+		
 		{ name: "colors", selector: { select: { mode: "list", options: ["Default", "User defined"] } } },
 		{ name: "name_color", selector: { text: {} } },
 		{ name: "plate_color", disabled: false, selector: { text: {} } },
@@ -658,6 +794,19 @@ class OldStyleUtilityMeterCard extends HTMLElement {
             return "Applies only to digits";
 		  case "font_size":
             return "Applies only to digits";
+		  case "show_wheel":
+            return "Shows a rotating wheel with marker, like on real electricity meter";
+		  case "speed_control_mode":
+            return "Fixed - the wheel rotates with constant speed defined below. Power - the speed depends on sensor value of a defined entity, can be Power, Current, Flow...";
+		  case "wheel_speed":
+            return "Speed of the wheel. Number of seconds per single rotation (0 - 20, 0 = STOP, 0.1 - fastest, 20 - slowest)";
+		  case "power_entity":
+            return "Select the entity which will affect the rotation speed of the wheel. Usually Power or Current when measuring Electricity consumption, Flow for water consumption etc.";
+		  case "speed_range_low":
+            return "Value of a sensor, on which the wheel stops rotating (usually zero)";
+		  case "speed_range_high":
+            return "Value of a sensor, on which the wheel rotates at maximum speed.";
+			
         }
         return undefined;
       },
@@ -672,8 +821,52 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 		} else {
 			sch.schema[w].disabled = false;
 		}
-	
-		var w = getSchIndex(sch, 'plate_color');
+		
+		
+		if (config.show_wheel == false) {
+			w = getSchIndex(sch, 'speed_control_mode');
+			sch.schema[w].disabled = true;
+			w = getSchIndex(sch, 'wheel_speed');
+			sch.schema[w].disabled = true;
+			w = getSchIndex(sch, 'power_entity');
+			sch.schema[w].disabled = true;
+			w = getSchIndex(sch, 'speed_range_low');
+			sch.schema[w].disabled = true;
+			w = getSchIndex(sch, 'speed_range_high');
+			sch.schema[w].disabled = true;
+		} else {
+			w = getSchIndex(sch, 'speed_control_mode');
+			sch.schema[w].disabled = false;
+			if (config.speed_control_mode == 'Fixed') {
+				w = getSchIndex(sch, 'wheel_speed');
+				sch.schema[w].disabled = false;
+				sch.schema[w].required = true;
+				w = getSchIndex(sch, 'power_entity');
+				sch.schema[w].required = false;
+				sch.schema[w].disabled = true;
+				w = getSchIndex(sch, 'speed_range_low');
+				sch.schema[w].required = false;
+				sch.schema[w].disabled = true;
+				w = getSchIndex(sch, 'speed_range_high');
+				sch.schema[w].required = false;
+				sch.schema[w].disabled = true;
+			} else {
+				w = getSchIndex(sch, 'wheel_speed');
+				sch.schema[w].required = false;
+				sch.schema[w].disabled = true;
+				w = getSchIndex(sch, 'power_entity');
+				sch.schema[w].disabled = false;
+				sch.schema[w].required = true;
+				w = getSchIndex(sch, 'speed_range_low');
+				sch.schema[w].disabled = false;
+				sch.schema[w].required = true;
+				w = getSchIndex(sch, 'speed_range_high');
+				sch.schema[w].disabled = false;
+				sch.schema[w].required = true;
+			}
+		}
+		
+		w = getSchIndex(sch, 'plate_color');
 		if (config.colors == 'Default') {
 			//config.plate_color.disabled = true;
 			sch.schema[w].disabled = true;
