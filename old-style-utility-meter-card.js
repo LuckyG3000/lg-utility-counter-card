@@ -80,8 +80,6 @@ class OldStyleUtilityMeterCard extends HTMLElement {
     }
 
     getState() {
-		console.log(this._config.power_entity);
-		console.log(this._hass.states[this._config.power_entity]);
         return this._hass.states[this.getEntityID()];
     }
 
@@ -755,7 +753,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 					}
 				} else {
 					if (this._config.power_entity && typeof this._config.power_entity === "string") {
-						var power_val = parseFloat(this._hass.states[this._config.power_entity]);
+						var power_val = parseFloat(this._hass.states[this._config.power_entity].state);
 						console.log("Power val: " + power_val);
 						if (power_val == 0) {
 							this._elements.wheel_marker.style.animationDuration = 0;
