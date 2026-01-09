@@ -201,7 +201,8 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			.osumc-red-bg {
 				display: inline-block;
 				position: relative;
-				top: 0;
+				/*top: 0;*/
+				vertical-align: top;
 				/*width: 60px;*/
 				height: 39px;
 				background-color: #F02000;
@@ -213,7 +214,8 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			.osumc-grey-bg {
 				display: inline-block;
 				position: relative;
-				top: 0;
+				/*top: 0;*/
+				vertical-align: top;
 				/*width: 30px;*/
 				height: 39px;
 				background-color: #888;
@@ -418,21 +420,19 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 						</span>`;
 			}
 			html_content += `
-					</div>
-					<div class="osumc-red-bg"></div>
-					<div class="osumc-grey-bg"></div>
-					<div id="osumc-decimal-point"></div>
-					<div class="osumc-line_cont">
-						<div class="osumc-line"></div>
-						<div class="osumc-line"></div>
-						<div class="osumc-line"></div>
-						<div class="osumc-line"></div>
-						<div class="osumc-line"></div>
-						<div class="osumc-line"></div>
-						<div class="osumc-line"></div>
-						<div class="osumc-line"></div>
-						<div class="osumc-line"></div>
-					</div>
+						<div id="osumc-decimal-point"></div>
+						<div class="osumc-line_cont">
+							<div class="osumc-line"></div>
+							<div class="osumc-line"></div>
+							<div class="osumc-line"></div>
+							<div class="osumc-line"></div>
+							<div class="osumc-line"></div>
+							<div class="osumc-line"></div>
+							<div class="osumc-line"></div>
+							<div class="osumc-line"></div>
+							<div class="osumc-line"></div>
+						</div>
+					</div><div class="osumc-red-bg"></div><div class="osumc-grey-bg"></div>
 				</div>
 				<div class="osumc-wheel-window">
 					<div class="osumc-wheel-window-left">
