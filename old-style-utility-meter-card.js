@@ -735,7 +735,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				this._elements.wheel_window.style.display = "block";
 				
 				if (this._config.wheel_color != undefined && this._config.wheel_color != '' && this._config.colors == 'User defined') {
-					this._elements.wheel.style.backgroundImage = "linear-gradient(to right, #111 -5%, " + this._config.wheel_color + " 50%, #111 105%);
+					this._elements.wheel.style.backgroundImage = "linear-gradient(to right, #111 -5%, " + this._config.wheel_color + " 50%, #111 105%)";
 				}
 				
 				if (this._config.wheel_marker_color != undefined && this._config.wheel_marker_color != '' && this._config.colors == 'User defined') {
