@@ -137,9 +137,12 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			}
             
 			.osumc-counter-div {
-				width: 100%;
+				width: min-content;
+				white-space: nowrap;
+				margin: 0 auto;
 			}
 			
+					
 			.osumc-main-div {
 				display: inline-block;
 				vertical-align: middle;
@@ -187,6 +190,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				background-image: linear-gradient(rgba(128,128,128,0.75), #aaa, rgba(128,128,128,0.75));
 				color: transparent;
 				background-clip: text;
+				position: relative;
 				width: 17px;
 				height: 24px;
 				display: block;
@@ -301,20 +305,21 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			
 			.osumc-wheel-window {
 				width: 90%;
-				height: 17px;
+				height: 21px;
 				background-color: #555;
-				margin-top: 10px;
+				margin: 20px auto;
 				text-align: center;
 				display: block;
 				font-size: 0;
+				white-space: nowrap;
 			}
 
 			.osumc-wheel-window-border {
 				display: inline-block;
 				width: 90%;
-				height: 9px;
+				height: 11px;
 				position: relative;
-				top: -10px;
+				top: -13px;
 				background-color: #000;
 			}
 
@@ -336,10 +341,10 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			.osumc-wheel-window-right-border {
 				display: block;
 				position: relative;
-				height: 9px;
+				height: 11px;
 				background-color: #000;
 				width: 3px;
-				top: 4px;
+				top: 5px;
 			}
 
 			.osumc-wheel-window-left-border {
@@ -438,13 +443,11 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				<div class="osumc-wheel-window">
 					<div class="osumc-wheel-window-left">
 						<div class="osumc-wheel-window-left-border"></div>
-					</div>
-					<div class="osumc-wheel-window-border">
+					</div><div class="osumc-wheel-window-border">
 						<div class="osumc-wheel">
 							<div class="osumc-wheel-marker"></div>
 						</div>
-					</div>
-					<div class="osumc-wheel-window-right">
+					</div><div class="osumc-wheel-window-right">
 						<div class="osumc-wheel-window-right-border"></div>
 					</div>
 				</div>
@@ -588,7 +591,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			//this._elements.redbg.style.left = ((30 * digits_left) + 5) + "px";
 			this._elements.redbg.style.width = (30 * digits_right + (markings_offset * (digits_right > 0))) + "px";
 			this._elements.redbg.style.left = ((-30 * digits_right) + 5 - markings_offset) + "px"; //"-61px";
-			//this._elements.greybg.style.left = "-66px";
+			this._elements.greybg.style.left = (((-30 * digits_right) + 5 - markings_offset) + (30 * digits_right + (markings_offset * (digits_right > 0)))) + "66px";
 			//this._elements.greybg.style.left = ((30 * digits_left) + 5 + (30 * digits_right) + markings_offset) + "px";
 			
 			this._elements.markings.style.left = ((30 * total_digits) - 13) + "px";
