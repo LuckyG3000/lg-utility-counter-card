@@ -481,6 +481,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 		this._elements.markings = card.querySelector(".osumc-line_cont");
 		
 		this._elements.wheel_window = card.querySelector(".osumc-wheel-window");
+		this._elements.wheel = card.querySelector(".osumc-wheel");
 		this._elements.wheel_marker = card.querySelector(".osumc-wheel-marker");
 		
 		this._elements.lu = card.querySelector("#osumc-last-update");
@@ -732,6 +733,15 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			
 			if (this._config.show_wheel) {
 				this._elements.wheel_window.style.display = "block";
+				
+				if (this._config.wheel_color != undefined && this._config.wheel_color != '' && this._config.colors == 'User defined') {
+					this._elements.wheel.style.backgroundImage = "linear-gradient(to right, #111 -5%, " + this._config.wheel_color + " 50%, #111 105%);
+				}
+				
+				if (this._config.wheel_marker_color != undefined && this._config.wheel_marker_color != '' && this._config.colors == 'User defined') {
+					this._elements.wheel_marker.style.backgroundColor = this._config.wheel_marker_color;
+				}
+				
 				if (this._config.speed_control_mode == 'Fixed') {
 					if (!isNaN(Number(this._config.wheel_speed))) {
 						this._elements.wheel_marker.style.animation-duration = this._config.wheel_speed;
