@@ -611,7 +611,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				} else {
 					this._elements.name.innerHTML = this._config.name;
 				}
-				if (this._config.name_color != undefined && this._config.name_color != '' && this._config.colors == 'User defined') {
+				if (this._config.name_color != undefined && this._config.name_color != '') {
 					this._elements.name.style.color = this._config.name_color;
 				}
 			} else {
@@ -654,33 +654,33 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				this._elements.icon.style.display = "none";
 			}
 
-			if (this._config.plate_color != undefined && this._config.plate_color != '' && this._config.colors == 'User defined') {
+			if (this._config.plate_color != undefined && this._config.plate_color != '') {
 				this._elements.card_content.style.backgroundColor = this._config.plate_color;
 			}
 			
-			if (this._config.integer_plate_color != undefined && this._config.integer_plate_color != '' && this._config.colors == 'User defined') {
+			if (this._config.integer_plate_color != undefined && this._config.integer_plate_color != '') {
 				this._elements.integer_div.style.backgroundColor = this._config.integer_plate_color;
 			}
 			
-			if (this._config.decimal_plate_color != undefined && this._config.decimal_plate_color != '' && this._config.colors == 'User defined') {
+			if (this._config.decimal_plate_color != undefined && this._config.decimal_plate_color != '') {
 				this._elements.redbg.style.backgroundColor = this._config.decimal_plate_color;
 			}
 			
-			if (this._config.unit_plate_color != undefined && this._config.unit_plate_color != '' && this._config.colors == 'User defined') {
+			if (this._config.unit_plate_color != undefined && this._config.unit_plate_color != '') {
 				this._elements.greybg.style.backgroundColor = this._config.unit_plate_color;
 			}
 			
-			if (this._config.unit_color != undefined && this._config.unit_color != '' && this._config.colors == 'User defined') {
+			if (this._config.unit_color != undefined && this._config.unit_color != '') {
 				this._elements.greybg.style.color = this._config.unit_color;
 			}
 			
-			if (this._config.digit_color != undefined && this._config.digit_color != '' && this._config.colors == 'User defined') {
+			if (this._config.digit_color != undefined && this._config.digit_color != '') {
 				for (var d = 0; d < total_digits; d++) {
 					this._elements.digit[d].style.backgroundImage = "linear-gradient(rgba(64,64,64,1), " + this._config.digit_color + ", rgba(64,64,64,1))";
 				}
 			}
 			
-			if (this._config.digit_bg_color != undefined && this._config.digit_bg_color != '' && this._config.colors == 'User defined') {
+			if (this._config.digit_bg_color != undefined && this._config.digit_bg_color != '') {
 				for (var d = 0; d < total_digits; d++) {
 					this._elements.digit_window[d].style.background = this._config.digit_bg_color;
 				}
@@ -716,15 +716,15 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			}
 			
 			
-			if (this._config.decimal_separator_color != undefined && this._config.decimal_separator_color != '' && this._config.colors == 'User defined') {
+			if (this._config.decimal_separator_color != undefined && this._config.decimal_separator_color != '') {
 				this._elements.dp.style.color = this._config.decimal_separator_color;
 			}
 			
-			if (this._config.icon_color != undefined && this._config.icon_color != '' && this._config.colors == 'User defined') {
+			if (this._config.icon_color != undefined && this._config.icon_color != '') {
 				this._elements.icon.style.color = this._config.icon_color;
 			}
 			
-			if (this._config.decimal_separator_color != undefined && this._config.decimal_separator_color != '' && this._config.colors == 'User defined') {
+			if (this._config.decimal_separator_color != undefined && this._config.decimal_separator_color != '') {
 				this._elements.dp.style.color = this._config.decimal_separator_color;
 			}
 			
@@ -734,7 +734,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				this._elements.markings.style.display = "none";
 			}
 			
-			if (this._config.markings_color != undefined && this._config.markings_color != '' && this._config.colors == 'User defined') {
+			if (this._config.markings_color != undefined && this._config.markings_color != '') {
 				this._elements.markings.style.color = this._config.markings_color;
 			}
 			
@@ -743,12 +743,12 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				this._elements.wheel_window.style.display = "block";
 				
 				//set custom wheel color
-				if (this._config.wheel_color != undefined && this._config.wheel_color != '' && this._config.colors == 'User defined') {
+				if (this._config.wheel_color != undefined && this._config.wheel_color != '') {
 					this._elements.wheel.style.backgroundImage = "linear-gradient(to right, #111 -5%, " + this._config.wheel_color + " 50%, #111 105%)";
 				}
 				
 				//set custom marker color
-				if (this._config.wheel_marker_color != undefined && this._config.wheel_marker_color != '' && this._config.colors == 'User defined') {
+				if (this._config.wheel_marker_color != undefined && this._config.wheel_marker_color != '') {
 					this._elements.wheel_marker.style.backgroundColor = this._config.wheel_marker_color;
 				}
 				
@@ -836,15 +836,14 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			{ name: "unit", selector: { text: {} } },
 
 			{ name: "show_wheel", selector: { boolean: {} } },
+			{ name: "marker_width", selector: { number: { min: 3, max: 100, step: 1, mode: "slider" } } },
 			{ name: "speed_control_mode", selector: { select: { mode: "list", options: ["Fixed", "Power"] } } },
 			{ name: "wheel_speed", selector: { number: { min: 0.1, max: 20, step: 0.1, mode: "slider" } } },
 			{ name: "power_entity", selector: { entity: {} } },
 			{ name: "max_power_value", selector: { number: { mode: "box" } } },
 			{ name: "min_rot_time", selector: { number: { min: 0.1, mode: "box" } } },
 			{ name: "max_rot_time", selector: { number: { min: 0.1, mode: "box" } } },
-			{ name: "marker_width", selector: { number: { min: 3, max: 100, step: 1, mode: "slider" } } },
-
-			{ name: "colors", selector: { select: { mode: "list", options: ["Default", "User defined"] } } },
+			
 			{ name: "plate_color", selector: { text: {} } },
 			{ name: "name_color", selector: { text: {} } },
 			{ name: "icon_color", selector: { text: {} } },
@@ -888,8 +887,8 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 					return "Shift digits vertically randomly by ±1px, to get a more realistic look.";
 				case "markings":
 					return "Show minor markings on last digit.";
-				case "colors":
-					return "You can set your desired colors for some elements of the card. Use color codes supported by CSS, e.g. #FFF, #C0C0C0, black, rgb(128, 128, 128), rgba(64, 0, 0, 0.25)...";
+				case "plate_color":
+					return "You can set your desired colors for the following elements of the card. Use color codes supported by CSS, e.g. #FFF, #C0C0C0, black, rgb(128, 128, 128), rgba(64, 0, 0, 0.25)...";
 				case "font":
 					return "Applies only to digits";
 				case "font_size":
@@ -970,56 +969,13 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 					w = getSchIndex(sch, 'power_entity');
 					sch.schema[w].disabled = false;
 					sch.schema[w].required = true;
-					w = getSchIndex(sch, 'speed_range_low');
+					w = getSchIndex(sch, 'min_rot_time');
 					sch.schema[w].disabled = false;
 					sch.schema[w].required = true;
-					w = getSchIndex(sch, 'speed_range_high');
+					w = getSchIndex(sch, 'max_rot_time');
 					sch.schema[w].disabled = false;
 					sch.schema[w].required = true;
 				}
-			}
-
-			w = getSchIndex(sch, 'integer_plate_color');
-			if (config.colors == 'Default') {
-				sch.schema[w].disabled = true;
-				w = getSchIndex(sch, 'plate_color');
-				sch.schema[w].disabled = true;
-				w = getSchIndex(sch, 'decimal_plate_color');
-				sch.schema[w].disabled = true;
-				w = getSchIndex(sch, 'unit_plate_color');
-				sch.schema[w].disabled = true;
-				w = getSchIndex(sch, 'unit_color');
-				sch.schema[w].disabled = true;
-				w = getSchIndex(sch, 'digit_color');
-				sch.schema[w].disabled = true;
-				w = getSchIndex(sch, 'digit_bg_color');
-				sch.schema[w].disabled = true;
-				w = getSchIndex(sch, 'decimal_separator_color');
-				sch.schema[w].disabled = true;
-				w = getSchIndex(sch, 'wheel_color');
-				sch.schema[w].disabled = true;
-				w = getSchIndex(sch, 'wheel_marker_color');
-				sch.schema[w].disabled = true;
-			} else {
-				sch.schema[w].disabled = false;
-				w = getSchIndex(sch, 'plate_color');
-				sch.schema[w].disabled = false;
-				w = getSchIndex(sch, 'decimal_plate_color');
-				sch.schema[w].disabled = false;
-				w = getSchIndex(sch, 'unit_plate_color');
-				sch.schema[w].disabled = false;
-				w = getSchIndex(sch, 'unit_color');
-				sch.schema[w].disabled = false;
-				w = getSchIndex(sch, 'digit_color');
-				sch.schema[w].disabled = false;
-				w = getSchIndex(sch, 'digit_bg_color');
-				sch.schema[w].disabled = false;
-				w = getSchIndex(sch, 'decimal_separator_color');
-				sch.schema[w].disabled = false;
-				w = getSchIndex(sch, 'wheel_color');
-				sch.schema[w].disabled = false;
-				w = getSchIndex(sch, 'wheel_marker_color');
-				sch.schema[w].disabled = false;
 			}
 		},
 	};
