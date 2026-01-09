@@ -585,11 +585,11 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			}
 			//this._elements.redbg.style.left = ((30 * digits_left) + 5) + "px";
 			this._elements.redbg.style.width = (30 * digits_right + (markings_offset * (digits_right > 0))) + "px";
-			this._elements.redbg.style.left = "-66px";
-			this._elements.greybg.style.left = "-66px";
+			this._elements.redbg.style.left = ((-30 * digits_right - markings_offset)); //"-64px";
+			//this._elements.greybg.style.left = "-66px";
 			//this._elements.greybg.style.left = ((30 * digits_left) + 5 + (30 * digits_right) + markings_offset) + "px";
 			
-			//this._elements.markings.style.left = ((30 * total_digits) - 14) + "px";
+			this._elements.markings.style.left = ((30 * total_digits) - 13) + "px";
 			
 			
 			if (this._config.show_name) {
