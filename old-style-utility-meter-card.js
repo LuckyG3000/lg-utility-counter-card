@@ -8,12 +8,12 @@
 **************************************************************/
 
 function loadCSS(url, id) {
-  const link = document.createElement("link");
-  link.id = id;
-  link.type = "text/css";
-  link.rel = "stylesheet";
-  link.href = url;
-  document.head.appendChild(link);
+	const link = document.createElement("link");
+	link.id = id;
+	link.type = "text/css";
+	link.rel = "stylesheet";
+	link.href = url;
+	document.head.appendChild(link);
 }
 
 function unloadCSS(id) {
@@ -25,73 +25,73 @@ function unloadCSS(id) {
 }
 
 function isNumeric(n) {
-    return !isNaN(parseFloat(n)) && isFinite(n);
+	return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
 
 
 class OldStyleUtilityMeterCard extends HTMLElement {
 
-    // private properties
+	// private properties
 
-    _config;
-    _hass;
-    _elements = {};
-    _isAttached = false;
+	_config;
+	_hass;
+	_elements = {};
+	_isAttached = false;
 
-    // lifecycle
+	// lifecycle
 	constructor() {
-        super();
-        this.doStyle();
-        this.doCard();
-    }
-    
-    setConfig(config) {
-        this._config = config;
-        if (!this._isAttached) {
-            this.doAttach();
-            this.doQueryElements();
-            this.doListen();
-            this._isAttached = true;
-        }
-        this.doCheckConfig();
-        this.doUpdateConfig();
-    }
+		super();
+		this.doStyle();
+		this.doCard();
+	}
 
-    set hass(hass) {
-        this._hass = hass;
-        this.doUpdateHass()
-    }
+	setConfig(config) {
+		this._config = config;
+		if (!this._isAttached) {
+			this.doAttach();
+			this.doQueryElements();
+			this.doListen();
+			this._isAttached = true;
+		}
+		this.doCheckConfig();
+		this.doUpdateConfig();
+	}
 
-    connectedCallback() {
+	set hass(hass) {
+		this._hass = hass;
+		this.doUpdateHass()
+	}
 
-    }
+	connectedCallback() {
 
-    onClicked() {
-        //this.doToggle();
-    }
+	}
 
-    getHeader() {
-        return this._config.header;
-    }
+	onClicked() {
+		//this.doToggle();
+	}
 
-    getEntityID() {
-        return this._config.entity;
-    }
+	getHeader() {
+		return this._config.header;
+	}
 
-    getState() {
-        return this._hass.states[this.getEntityID()];
-    }
+	getEntityID() {
+		return this._config.entity;
+	}
 
-    getAttributes() {
-        return this.getState().attributes
-    }
+	getState() {
+		return this._hass.states[this.getEntityID()];
+	}
 
-    getName() {
-        const friendlyName = this.getAttributes().friendly_name;
-        return friendlyName ? friendlyName : this.getEntityID();
-    }
-	
+	getAttributes() {
+		return this.getState().attributes
+	}
+
+	getName() {
+		const friendlyName = this.getAttributes().friendly_name;
+		return friendlyName ? friendlyName : this.getEntityID();
+	}
+
 	// The height of your card. Home Assistant uses this to automatically
 	// distribute all cards over the available columns in masonry view
 	getCardSize() {
@@ -109,33 +109,33 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 	}
 
 
-    // jobs
-    doCheckConfig() {
-        if (!this._config.entity) {
-            throw new Error('Please define an entity!');
-        }
-    }
+	// jobs
+	doCheckConfig() {
+		if (!this._config.entity) {
+			throw new Error('Please define an entity!');
+		}
+	}
 
 
 
-    doStyle() {
-        this._elements.style = document.createElement("style");
-        this._elements.style.textContent = `
+	doStyle() {
+		this._elements.style = document.createElement("style");
+		this._elements.style.textContent = `
 			.card-content {
 				/*background-color: #888;*/
 			}
-			
-            .osumc-error {
-                text-color: red;
-            }
-            .osumc-error--hidden {
-                display: none;
-            }
-			
+
+			.osumc-error {
+				text-color: red;
+			}
+			.osumc-error--hidden {
+				display: none;
+			}
+
 			.osumc-name {
 				margin-bottom: 10px;
 			}
-            
+
 			.osumc-counter-div {
 				width: min-content;
 				white-space: nowrap;
@@ -245,7 +245,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			.osumc-line_cont {
 				position: absolute;
 				top: 4px;
-				width: 100%;
+				width: min-content;
 				z-index: 2;
 			}
 
@@ -385,15 +385,16 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			}
 
 			@keyframes osumc-wheel-animation {
-				0% {left: -2%; width: 10px; margin-left: -5px; opacity: 0.1}
-				7% {left: 7%; width: 22px; margin-left: -10px; opacity: 0.4}
-				13% {left: 20%; width: 27px; margin-left: -13px;}
-				19% {left: 36%; width: 29px; margin-left: -14px;}
-				25% {left: 50%; width: 30px; margin-left: -15px; opacity: 1}
-				31% {left: 64%; width: 29px; margin-left: -14px;}
-				37% {left: 80%; width: 27px; margin-left: -13px;}
-				43% {left: 93%; width: 22px; margin-left: -11px; opacity: 0.4}
-				50% {left: 102%; width: 12px; margin-left: -6px; opacity: 0.1}
+				--marker-width: 30px;
+				0% {left: -2%; width: calc(var(--marker-width) * 10/30); margin-left: -5px; opacity: 0.1}
+				7% {left: 7%; width: calc(var(--marker-width) * 22/30); margin-left: -10px; opacity: 0.4}
+				13% {left: 20%; width: calc(var(--marker-width) * 27/30); margin-left: -13px;}
+				19% {left: 36%; width: calc(var(--marker-width) * 29/30); margin-left: -14px;}
+				25% {left: 50%; width: var(--marker-width); margin-left: -15px; opacity: 1}
+				31% {left: 64%; width: calc(var(--marker-width) * 29/30); margin-left: -14px;}
+				37% {left: 80%; width: calc(var(--marker-width) * 27/30); margin-left: -13px;}
+				43% {left: 93%; width: calc(var(--marker-width) * 22/30); margin-left: -11px; opacity: 0.4}
+				50% {left: 102%; width: calc(var(--marker-width) * 12/30); margin-left: -6px; opacity: 0.1}
 				51% {opacity: 0}
 				100% {opacity: 0;}
 			}
@@ -404,11 +405,11 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			#osumc-last-update {
 				display: none;
 			}
-       `;
-    }
+		`;
+	}
 
-    doCard() {
-        this._elements.card = document.createElement("ha-card");
+	doCard() {
+		this._elements.card = document.createElement("ha-card");
 		var html_content = `
 			<div class="card-content">
 				<p class="osumc-error osumc-error--hidden">
@@ -453,23 +454,23 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				</div>
 				<div id="osumc-last-update"></div>
 			</div>
-        `;
+		`;
 		
 		this._elements.card.innerHTML = html_content;
-    }
+	}
 
-    doAttach() {
-        this.append(this._elements.style, this._elements.card);
-    }
+	doAttach() {
+		this.append(this._elements.style, this._elements.card);
+	}
 
-    doQueryElements() {
-        const card = this._elements.card;
-        this._elements.error = card.querySelector(".osumc-error")
+	doQueryElements() {
+		const card = this._elements.card;
+		this._elements.error = card.querySelector(".osumc-error")
 
 		this._elements.card_content = card.querySelector(".card-content")
 
 		this._elements.name = card.querySelector(".osumc-name");
-		
+
 		this._elements.counter_div = card.querySelector(".osumc-counter-div");
 		this._elements.integer_div = card.querySelector(".osumc-integer-div");
 		this._elements.digit_window = card.querySelectorAll(".osumc-digit-window");
@@ -479,32 +480,32 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 		this._elements.dp = card.querySelector("#osumc-decimal-point");
 		this._elements.icon = card.querySelector("#osumc-icon");
 		this._elements.markings = card.querySelector(".osumc-line_cont");
-		
+
 		this._elements.wheel_window = card.querySelector(".osumc-wheel-window");
 		this._elements.wheel = card.querySelector(".osumc-wheel");
 		this._elements.wheel_marker = card.querySelector(".osumc-wheel-marker");
-		
+
 		this._elements.lu = card.querySelector("#osumc-last-update");
-    }
+	}
 
-    doListen() {
-        //this._elements.dl.addEventListener("click", this.onClicked.bind(this), false);
-    }
+	doListen() {
+		//this._elements.dl.addEventListener("click", this.onClicked.bind(this), false);
+	}
 
-    doUpdateConfig() {
-        if (this.getHeader()) {
-            this._elements.card.setAttribute("header", this.getHeader());
-        } else {
-            this._elements.card.removeAttribute("header");
-        }
-    }
+	doUpdateConfig() {
+		if (this.getHeader()) {
+			this._elements.card.setAttribute("header", this.getHeader());
+		} else {
+			this._elements.card.removeAttribute("header");
+		}
+	}
 
-    doUpdateHass() {
-        if (!this.getState()) {
-            this._elements.error.textContent = `${this.getEntityID()} is unavailable.`;
-            this._elements.error.classList.remove("osumc-error--hidden");
-        } else {
-            this._elements.error.textContent = "";
+	doUpdateHass() {
+		if (!this.getState()) {
+			this._elements.error.textContent = `${this.getEntityID()} is unavailable.`;
+			this._elements.error.classList.remove("osumc-error--hidden");
+		} else {
+			this._elements.error.textContent = "";
 
 			var cntr_val = parseFloat(this.getState().state);
 			if (isNumeric(this._config.offset)) {
@@ -747,20 +748,25 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				
 				if (this._config.speed_control_mode == 'Fixed') {
 					if (!isNaN(Number(this._config.wheel_speed))) {
-						this._elements.wheel_marker.style.animationDuration = this._config.wheel_speed;
+						this._elements.wheel_marker.style.animationDuration = this._config.wheel_speed + "s";
 					} else {
 						this._elements.wheel_marker.style.removeProperty('animation-duration');
 					}
-				} else {
+				} else {	//dynamic speed based on value of selected custom Power entity
 					if (this._config.power_entity && typeof this._config.power_entity === "string") {
 						var power_val = parseFloat(this._hass.states[this._config.power_entity].state);
-						console.log("Power val: " + power_val);
-						if (power_val == 0) {
+						//formula to calculate animation time (rotation speed) of the wheel
+						//from current state of Power entity and defined constants
+						// (max_rot_time + min_rot_time * power_val / max_power) - (max_rot_time * power_val / max_power)
+						var min_rot_time = this._config.min_rot_time;
+						var max_rot_time = this._config.max_rot_time;
+						var max_power = this._config.max_power_value;
+						if (power_val == 0 || !isNumeric(power_val) || !isNumeric(min_rot_time) || !isNumeric(max_rot_time) || !isNumeric(max_power)) {
 							this._elements.wheel_marker.style.animationDuration = 0;
 						} else {
-							var calc_wheel_speed = 20.1 - ((power_val / this._config.speed_range_high) * 20.0);
+							var calc_wheel_speed = (max_rot_time + min_rot_time * power_val / max_power) - (max_rot_time * power_val / max_power);
 							this._elements.wheel_marker.style.animationDuration = calc_wheel_speed + "s";
-							console.log("Speed: " + calc_wheel_speed);
+							//console.log("Speed: " + calc_wheel_speed);
 						}
 					} else {
 						console.log("Invalid power entity");
@@ -793,205 +799,214 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 	static getConfigForm() {
 	
     var sch = {
-      schema: [
-        { name: "entity", required: true, selector: { entity: {} } },
-        { name: "name", selector: { text: {} } },
-		{ name: "show_name", selector: { boolean: {} } },
-		{ name: "whole_digit_number", selector: { number: { min: 0, max: 10, step: 1, mode: "slider" } } },
-		{ name: "decimal_digit_number", selector: { number: { min: 0, max: 5, step: 1, mode: "slider" } } },
-		{ name: "decimal_separator", selector: { select: { mode: "list", options: ["Point", "Comma", "None"] } } },
-		{ name: "markings", selector: { boolean: {} } },
-		{ name: "random_shift", selector: { boolean: {} } },
-		{ name: "offset", selector: { number: { step: "any", mode: "box" } } },
-        {
-            name: "icon",
-            selector: {
-              icon: {},
-            },
-            context: {
-              icon_entity: "entity",
-            },
-        },
-        { name: "unit", selector: { text: {} } },
+		schema: [
+			{ name: "entity", required: true, selector: { entity: {} } },
+			{ name: "name", selector: { text: {} } },
+			{ name: "show_name", selector: { boolean: {} } },
+			{ name: "whole_digit_number", selector: { number: { min: 0, max: 10, step: 1, mode: "slider" } } },
+			{ name: "decimal_digit_number", selector: { number: { min: 0, max: 5, step: 1, mode: "slider" } } },
+			{ name: "decimal_separator", selector: { select: { mode: "list", options: ["Point", "Comma", "None"] } } },
+			{ name: "markings", selector: { boolean: {} } },
+			{ name: "random_shift", selector: { boolean: {} } },
+			{ name: "offset", selector: { number: { step: "any", mode: "box" } } },
+			{
+				name: "icon",
+				selector: {
+					icon: {},
+				},
+				context: {
+					icon_entity: "entity",
+				},
+			},
+			{ name: "unit", selector: { text: {} } },
+
+			{ name: "show_wheel", selector: { boolean: {} } },
+			{ name: "speed_control_mode", selector: { select: { mode: "list", options: ["Fixed", "Power"] } } },
+			{ name: "wheel_speed", selector: { number: { min: 0.1, max: 20, step: 0.1, mode: "slider" } } },
+			{ name: "power_entity", selector: { entity: {} } },
+			{ name: "max_power_value", selector: { number: { mode: "box" } } },
+			{ name: "min_rot_time", selector: { number: { min: 0.1, mode: "box" } } },
+			{ name: "max_rot_time", selector: { number: { min: 0.1, mode: "box" } } },
+			{ name: "marker_width", selector: { number: { min: 3, max: 100, step: 1, mode: "slider" } } },
+
+			{ name: "colors", selector: { select: { mode: "list", options: ["Default", "User defined"] } } },
+			{ name: "plate_color", selector: { text: {} } },
+			{ name: "name_color", selector: { text: {} } },
+			{ name: "icon_color", selector: { text: {} } },
+			{ name: "integer_plate_color", disabled: false, selector: { text: {} } },
+			{ name: "decimal_plate_color", selector: { text: {} } },
+			{ name: "unit_plate_color", selector: { text: {} } },
+			{ name: "unit_color", selector: { text: {} } },
+			{ name: "digit_color", selector: { text: {} } },
+			{ name: "digit_bg_color", selector: { text: {} } },
+			{ name: "decimal_separator_color", selector: { text: {} } },
+			{ name: "markings_color", selector: { text: {} } },
+
+			{ name: "wheel_color", selector: { text: {} } },
+			{ name: "wheel_marker_color", selector: { text: {} } },
+
+			{ name: "font", selector: { select: { mode: "dropdown", options: ["Default", "Carlito"] } } },
+			{ name: "font_size", selector: { text: {} } },
+
+			//{ name: "plate_color", disabled: true, selector: { color_rgb: {} } },
+			//{ name: "theme", selector: { theme: {} } },
+		],
 		
-		{ name: "show_wheel", selector: { boolean: {} } },
-		{ name: "speed_control_mode", selector: { select: { mode: "list", options: ["Fixed", "Power"] } } },
-		{ name: "wheel_speed", selector: { number: { min: 0.1, max: 20, step: 0.1, mode: "slider" } } },
-		{ name: "power_entity", selector: { entity: {} } },
-		{ name: "speed_range_low", selector: { number: { mode: "box" } } },
-		{ name: "speed_range_high", selector: { number: { mode: "box" } } },
+		computeLabel: (schema) => {
+			if (schema.name === "icon") return "Special Icon";
+			return undefined;
+		},
 		
-		{ name: "colors", selector: { select: { mode: "list", options: ["Default", "User defined"] } } },
-		{ name: "plate_color", selector: { text: {} } },
-		{ name: "name_color", selector: { text: {} } },
-		{ name: "integer_plate_color", disabled: false, selector: { text: {} } },
-		{ name: "decimal_plate_color", selector: { text: {} } },
-		{ name: "unit_plate_color", selector: { text: {} } },
-		{ name: "unit_color", selector: { text: {} } },
-		{ name: "digit_color", selector: { text: {} } },
-		{ name: "digit_bg_color", selector: { text: {} } },
-		{ name: "decimal_separator_color", selector: { text: {} } },
-		{ name: "markings_color", selector: { text: {} } },
-		{ name: "icon_color", selector: { text: {} } },
-		{ name: "font", selector: { select: { mode: "dropdown", options: ["Default", "Carlito"] } } },
-		{ name: "font_size", selector: { text: {} } },
-		{ name: "wheel_color", selector: { text: {} } },
-		{ name: "wheel_marker_color", selector: { text: {} } },
-		//{ name: "plate_color", disabled: true, selector: { color_rgb: {} } },
-        //{ name: "theme", selector: { theme: {} } },
-      ],
-      computeLabel: (schema) => {
-        if (schema.name === "icon") return "Special Icon";
-        return undefined;
-      },
-      computeHelper: (schema) => {
-        switch (schema.name) {
-          case "entity":
-            return "Choose entity to show on meter";
-          case "unit":
-            return "The unit of measurement for this card. If not filled, unit is taken from selected entity. (0 = hide unit)";
-		  case "whole_digit_number":
-            return "Number of digits to the left of decimal point. (0 - 10, 99 = auto)";
-		  case "decimal_digit_number":
-            return "Number of digits to the right of decimal point. (0 - 5, 99 = auto)";
-		  case "offset":
-            return "This value will be added to entity's value. If negative, it will be subtracted.";
-		  case "random_shift":
-            return "Shift digits vertically randomly by ±1px, to get a more realistic look.";
-		  case "markings":
-            return "Show minor markings on last digit.";
-		  case "colors":
-            return "You can set your desired colors for some elements of the card. Use color codes supported by CSS, e.g. #FFF, #C0C0C0, black, rgb(128, 128, 128), rgba(64, 0, 0, 0.25)...";
-		  case "font":
-            return "Applies only to digits";
-		  case "font_size":
-            return "Applies only to digits";
-		  case "show_wheel":
-            return "Shows a rotating wheel with marker, like on real electricity meter";
-		  case "speed_control_mode":
-            return "Fixed - the wheel rotates with constant speed defined below. Power - the speed depends on sensor value of a defined entity, can be Power, Current, Flow...";
-		  case "wheel_speed":
-            return "Speed of the wheel. Number of seconds per single rotation (0 - 20, 0 = STOP, 0.1 - fastest, 20 - slowest)";
-		  case "power_entity":
-            return "Select the entity which will affect the rotation speed of the wheel. Usually Power or Current when measuring Electricity consumption, Flow for water consumption etc.";
-		  case "speed_range_low":
-            return "Value of a sensor, on which the wheel stops rotating (usually zero)";
-		  case "speed_range_high":
-            return "Value of a sensor, on which the wheel rotates at maximum speed.";
-			
-        }
-        return undefined;
-      },
-      assertConfig: (config) => {
-        if (config.other_option) {
-          throw new Error("'other_option' is unexpected.");
-        }
+		computeHelper: (schema) => {
+			switch (schema.name) {
+				case "entity":
+					return "Choose entity to show on meter";
+				case "unit":
+					return "The unit of measurement for this card. If not filled, unit is taken from selected entity. (0 = hide unit)";
+				case "whole_digit_number":
+					return "Number of digits to the left of decimal point. (0 - 10, 99 = auto)";
+				case "decimal_digit_number":
+					return "Number of digits to the right of decimal point. (0 - 5, 99 = auto)";
+				case "offset":
+					return "This value will be added to entity's value. If negative, it will be subtracted.";
+				case "random_shift":
+					return "Shift digits vertically randomly by ±1px, to get a more realistic look.";
+				case "markings":
+					return "Show minor markings on last digit.";
+				case "colors":
+					return "You can set your desired colors for some elements of the card. Use color codes supported by CSS, e.g. #FFF, #C0C0C0, black, rgb(128, 128, 128), rgba(64, 0, 0, 0.25)...";
+				case "font":
+					return "Applies only to digits";
+				case "font_size":
+					return "Applies only to digits";
+				case "show_wheel":
+					return "Shows a rotating wheel with marker, like on real electricity meter";
+				case "speed_control_mode":
+					return "Fixed - the wheel rotates with constant speed defined below. Power - the speed depends on sensor value of a defined entity, can be Power, Current, Flow...";
+				case "wheel_speed":
+					return "Speed of the wheel. Number of seconds per single rotation (0 - 20, 0 = STOP, 0.1 - fastest, 20 - slowest)";
+				case "power_entity":
+					return "Select the entity which will affect the rotation speed of the wheel. Usually Power or Current when measuring Electricity consumption, Flow for water consumption etc.";
+				case "min_rot_time":
+					return "Duration of a single rotation at highest speed (in seconds, minimum 0.1). See Readme for deeper explanation.";
+				case "max_rot_time":
+					return "Duration of a single rotation at lowest speed (in seconds, minimum 0.1). See Readme for deeper explanation.";
+				case "max_power_value":
+					return "Maximum expected value of the above entity, at which the wheel will rotate at max speed. See Readme for deeper explanation.";
+			}
+			return undefined;
+		},
 		
-		if (!config.entity || typeof config.entity !== "string") {
-			throw new Error('Configuration error: "entity" must be a non-empty string.');
-		}
-		
-		if (config.speed_range_low !== undefined && isNaN(Number(config.speed_range_low))) {
-			throw new Error('Configuration error: "speed_range_low" must be a valid number.');
-		}
-		
-		
-		var w = getSchIndex(sch, 'decimal_separator');
-		if (config.decimal_digit_number == 0) {
-			sch.schema[w].disabled = true;
-		} else {
-			sch.schema[w].disabled = false;
-		}
-		
-		
-		if (config.show_wheel == false) {
-			w = getSchIndex(sch, 'speed_control_mode');
-			sch.schema[w].disabled = true;
-			sch.schema[w].visible = false;
-			w = getSchIndex(sch, 'wheel_speed');
-			sch.schema[w].disabled = true;
-			sch.schema[w].hide = true;
-			w = getSchIndex(sch, 'power_entity');
-			sch.schema[w].disabled = true;
-			w = getSchIndex(sch, 'speed_range_low');
-			sch.schema[w].disabled = true;
-			w = getSchIndex(sch, 'speed_range_high');
-			sch.schema[w].disabled = true;
-		} else {
-			w = getSchIndex(sch, 'speed_control_mode');
-			sch.schema[w].disabled = false;
-			if (config.speed_control_mode == 'Fixed') {
-				w = getSchIndex(sch, 'wheel_speed');
-				sch.schema[w].disabled = false;
-				sch.schema[w].required = true;
-				w = getSchIndex(sch, 'power_entity');
-				sch.schema[w].required = false;
-				sch.schema[w].disabled = true;
-				w = getSchIndex(sch, 'speed_range_low');
-				sch.schema[w].required = false;
-				sch.schema[w].disabled = true;
-				w = getSchIndex(sch, 'speed_range_high');
-				sch.schema[w].required = false;
+		assertConfig: (config) => {
+			if (config.other_option) {
+				throw new Error("'other_option' is unexpected.");
+			}
+
+			if (!config.entity || typeof config.entity !== "string") {
+				throw new Error('Configuration error: "entity" must be a non-empty string.');
+			}
+
+			if (config.speed_range_low !== undefined && isNaN(Number(config.speed_range_low))) {
+				throw new Error('Configuration error: "speed_range_low" must be a valid number.');
+			}
+
+
+			var w = getSchIndex(sch, 'decimal_separator');
+			if (config.decimal_digit_number == 0) {
 				sch.schema[w].disabled = true;
 			} else {
-				w = getSchIndex(sch, 'wheel_speed');
-				sch.schema[w].required = false;
-				sch.schema[w].disabled = true;
-				w = getSchIndex(sch, 'power_entity');
 				sch.schema[w].disabled = false;
-				sch.schema[w].required = true;
-				w = getSchIndex(sch, 'speed_range_low');
-				sch.schema[w].disabled = false;
-				sch.schema[w].required = true;
-				w = getSchIndex(sch, 'speed_range_high');
-				sch.schema[w].disabled = false;
-				sch.schema[w].required = true;
 			}
-		}
-		
-		w = getSchIndex(sch, 'integer_plate_color');
-		if (config.colors == 'Default') {
-			sch.schema[w].disabled = true;
-			w = getSchIndex(sch, 'decimal_plate_color');
-			sch.schema[w].disabled = true;
-			w = getSchIndex(sch, 'unit_plate_color');
-			sch.schema[w].disabled = true;
-			w = getSchIndex(sch, 'unit_color');
-			sch.schema[w].disabled = true;
-			w = getSchIndex(sch, 'digit_color');
-			sch.schema[w].disabled = true;
-			w = getSchIndex(sch, 'digit_bg_color');
-			sch.schema[w].disabled = true;
-			w = getSchIndex(sch, 'decimal_separator_color');
-			sch.schema[w].disabled = true;
-			w = getSchIndex(sch, 'wheel_color');
-			sch.schema[w].disabled = true;
-			w = getSchIndex(sch, 'wheel_marker_color');
-			sch.schema[w].disabled = true;
-		} else {
-			sch.schema[w].disabled = false;
-			w = getSchIndex(sch, 'decimal_plate_color');
-			sch.schema[w].disabled = false;
-			w = getSchIndex(sch, 'unit_plate_color');
-			sch.schema[w].disabled = false;
-			w = getSchIndex(sch, 'unit_color');
-			sch.schema[w].disabled = false;
-			w = getSchIndex(sch, 'digit_color');
-			sch.schema[w].disabled = false;
-			w = getSchIndex(sch, 'digit_bg_color');
-			sch.schema[w].disabled = false;
-			w = getSchIndex(sch, 'decimal_separator_color');
-			sch.schema[w].disabled = false;
-			w = getSchIndex(sch, 'wheel_color');
-			sch.schema[w].disabled = false;
-			w = getSchIndex(sch, 'wheel_marker_color');
-			sch.schema[w].disabled = false;
-		}
-      },
-    };
+
+
+			if (config.show_wheel == false) {
+				w = getSchIndex(sch, 'speed_control_mode');
+				sch.schema[w].disabled = true;
+				sch.schema[w].visible = false;
+				w = getSchIndex(sch, 'wheel_speed');
+				sch.schema[w].disabled = true;
+				sch.schema[w].hide = true;
+				w = getSchIndex(sch, 'power_entity');
+				sch.schema[w].disabled = true;
+				w = getSchIndex(sch, 'speed_range_low');
+				sch.schema[w].disabled = true;
+				w = getSchIndex(sch, 'speed_range_high');
+				sch.schema[w].disabled = true;
+			} else {
+				w = getSchIndex(sch, 'speed_control_mode');
+				sch.schema[w].disabled = false;
+				if (config.speed_control_mode == 'Fixed') {
+					w = getSchIndex(sch, 'wheel_speed');
+					sch.schema[w].disabled = false;
+					sch.schema[w].required = true;
+					w = getSchIndex(sch, 'power_entity');
+					sch.schema[w].required = false;
+					sch.schema[w].disabled = true;
+					w = getSchIndex(sch, 'speed_range_low');
+					sch.schema[w].required = false;
+					sch.schema[w].disabled = true;
+					w = getSchIndex(sch, 'speed_range_high');
+					sch.schema[w].required = false;
+					sch.schema[w].disabled = true;
+				} else {
+					w = getSchIndex(sch, 'wheel_speed');
+					sch.schema[w].required = false;
+					sch.schema[w].disabled = true;
+					w = getSchIndex(sch, 'power_entity');
+					sch.schema[w].disabled = false;
+					sch.schema[w].required = true;
+					w = getSchIndex(sch, 'speed_range_low');
+					sch.schema[w].disabled = false;
+					sch.schema[w].required = true;
+					w = getSchIndex(sch, 'speed_range_high');
+					sch.schema[w].disabled = false;
+					sch.schema[w].required = true;
+				}
+			}
+
+			w = getSchIndex(sch, 'integer_plate_color');
+			if (config.colors == 'Default') {
+				sch.schema[w].disabled = true;
+				w = getSchIndex(sch, 'decimal_plate_color');
+				sch.schema[w].disabled = true;
+				w = getSchIndex(sch, 'unit_plate_color');
+				sch.schema[w].disabled = true;
+				w = getSchIndex(sch, 'unit_color');
+				sch.schema[w].disabled = true;
+				w = getSchIndex(sch, 'digit_color');
+				sch.schema[w].disabled = true;
+				w = getSchIndex(sch, 'digit_bg_color');
+				sch.schema[w].disabled = true;
+				w = getSchIndex(sch, 'decimal_separator_color');
+				sch.schema[w].disabled = true;
+				w = getSchIndex(sch, 'wheel_color');
+				sch.schema[w].disabled = true;
+				w = getSchIndex(sch, 'wheel_marker_color');
+				sch.schema[w].disabled = true;
+			} else {
+				sch.schema[w].disabled = false;
+				w = getSchIndex(sch, 'decimal_plate_color');
+				sch.schema[w].disabled = false;
+				w = getSchIndex(sch, 'unit_plate_color');
+				sch.schema[w].disabled = false;
+				w = getSchIndex(sch, 'unit_color');
+				sch.schema[w].disabled = false;
+				w = getSchIndex(sch, 'digit_color');
+				sch.schema[w].disabled = false;
+				w = getSchIndex(sch, 'digit_bg_color');
+				sch.schema[w].disabled = false;
+				w = getSchIndex(sch, 'decimal_separator_color');
+				sch.schema[w].disabled = false;
+				w = getSchIndex(sch, 'wheel_color');
+				sch.schema[w].disabled = false;
+				w = getSchIndex(sch, 'wheel_marker_color');
+				sch.schema[w].disabled = false;
+			}
+		},
+	};
 	
 	return sch;
-  }
+	}
 
 }
 
