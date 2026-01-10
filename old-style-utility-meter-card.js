@@ -758,6 +758,10 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				this._elements.icon.style.color = this._config.icon_color;
 			}
 			
+			if (this._config.icon_background_color != undefined && this._config.icon_background_color != '') {
+				this._elements.icon_div.style.backgroundColor = this._config.icon_background_color;
+			}
+			
 			if (this._config.decimal_separator_color != undefined && this._config.decimal_separator_color != '') {
 				this._elements.dp.style.color = this._config.decimal_separator_color;
 			}
@@ -881,6 +885,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			{ name: "plate_color", selector: { text: {} } },
 			{ name: "name_color", selector: { text: {} } },
 			{ name: "icon_color", selector: { text: {} } },
+			{ name: "icon_background_color", selector: { text: {} } },
 			{ name: "integer_plate_color", disabled: false, selector: { text: {} } },
 			{ name: "decimal_plate_color", selector: { text: {} } },
 			{ name: "unit_plate_color", selector: { text: {} } },
