@@ -6,7 +6,7 @@ Old Style Utility Meter Card for Home Assistant
 Customizable Utility Meter Card based on old style (non digital) utility meter box with rotating digits and an animated spinning wheel :new:.<br/>
 This picture does a better job than describing it with words:
 
-![Old Style Utility Meter Card](https://github.com/LuckyG3000/old-style-utility-meter-card/blob/main/imgs/screenshot.png?raw=true)
+![Old Style Utility Meter Card](https://github.com/LuckyG3000/old-style-utility-meter-card/blob/main/imgs/wheel_animation.webp?raw=true)
 
 This is my first custom card project.
 
