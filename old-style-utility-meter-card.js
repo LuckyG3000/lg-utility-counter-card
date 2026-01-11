@@ -2,7 +2,7 @@
 *                                                            *
 *                Old Style Utility Meter Card                *
 *                       by LuckyG3000                        *
-*                           v1.0.2                           *
+*                           v1.1.0                           *
 * https://github.com/LuckyG3000/old-style-utility-meter-card *
 *           GNU GENERAL PUBLIC LICENSE version 3.0           *
 *                                                            *
