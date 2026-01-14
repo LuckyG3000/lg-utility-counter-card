@@ -2,7 +2,7 @@
 *                                                            *
 *                Old Style Utility Meter Card                *
 *                       by LuckyG3000                        *
-*                           v1.1.0                           *
+*                           v1.2.0                           *
 * https://github.com/LuckyG3000/old-style-utility-meter-card *
 *           GNU GENERAL PUBLIC LICENSE version 3.0           *
 *                                                            *
@@ -136,6 +136,10 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 		if (!this._config.entity) {
 			throw new Error('Please define an entity!');
 		}
+		
+		if (!this._config.power_entity && this._config.speed_control_mode == "Power") {
+			throw new Error('Please define the Power entity for wheel speed control mode!');
+		}
 	}
 
 
@@ -144,7 +148,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 		this._elements.style = document.createElement("style");
 		this._elements.style.textContent = `
 			:root {
-				--marker-width: 30px;
+				--marker-width: 60px;
 			}
 			
 			.card-content {
@@ -232,22 +236,17 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			.osumc-red-bg {
 				display: inline-block;
 				position: relative;
-				/*top: 0;*/
 				vertical-align: top;
-				/*width: 60px;*/
 				height: 39px;
 				background-color: #F02000;
 				line-height: 32px;
-				/*left: 148px;*/
 			}
 
 
 			.osumc-grey-bg {
 				display: inline-block;
 				position: relative;
-				/*top: 0;*/
 				vertical-align: top;
-				/*width: 30px;*/
 				height: 39px;
 				background-color: #888;
 				line-height: 39px;
@@ -255,7 +254,6 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				font-size: 18px;
 				font-weight: bold;
 				font-family: Carlito, sans-serif;
-				/*left: 194px;*/
 			}
 
 			#osumc-decimal-point {
@@ -333,7 +331,6 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			.osumc-wheel-window {
 				width: 90%;
 				height: 21px;
-				/*background-color: #555;*/
 				margin: 20px auto;
 				text-align: center;
 				display: block;
@@ -354,7 +351,6 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			.osumc-wheel-window-right {
 				display: inline-block;
 				width: 5%;
-				/*background-color: #555;*/
 				height: 100%;
 				position: relative;
 				z-index: 1;
@@ -399,8 +395,8 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 
 			.osumc-wheel-marker {
 				background-color: #000;
-				width: 30px;
-				margin-left: -15px;
+				width: var(--marker-width);
+				margin-left: calc(var(--marker-width) * -0.5);
 				height: 100%;
 				position: relative;
 				left: 50px;
@@ -527,8 +523,11 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 	}
 
 	doUpdateHass() {
-		if (!this.getState()) {
+		if (!this.getState() || this._config.entity == '' || this._config.entity == undefined || typeof this._config.entity !== "string") {
 			this._elements.error.textContent = `${this.getEntityID()} is unavailable.`;
+			this._elements.error.classList.remove("osumc-error--hidden");
+		} else if ((this._config.power_entity == '' || typeof this._config.power_entity !== "string") && this._config.speed_control_mode == 'Power') {
+			this._elements.error.textContent = `Power entity is unavailable.`;
 			this._elements.error.classList.remove("osumc-error--hidden");
 		} else {
 			this._elements.error.textContent = "";
@@ -674,6 +673,8 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				this._elements.dp.innerHTML = ".";
 			} else if (this._config.decimal_separator == "Comma") {
 				this._elements.dp.innerHTML = ",";
+			} else if (this._config.decimal_separator == "Colon") {
+				this._elements.dp.innerHTML = ":";
 			} else {
 				this._elements.dp.innerHTML = "";
 			}
@@ -743,7 +744,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				if (this._config.font_size == undefined) {
 					this._elements.digit[d].style.fontSize = "26px";
 				} else {
-					this._elements.digit[d].style.fontSize = this._config.font_size;
+					this._elements.digit[d].style.fontSize = this._config.font_size + "px";
 				}
 			}
 			
@@ -789,11 +790,13 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				}
 				
 				//set custom marker width
+				var r = document.querySelector(':root');
 				if (this._config.marker_width != undefined && this._config.marker_width != '') {
 					this._elements.wheel_marker.style.width = this._config.marker_width + "px";
 					//also set the variable used for calculation in animation
-					var r = document.querySelector(':root');
 					r.style.setProperty('--marker-width', this._config.marker_width + "px");
+				} else {
+					r.style.setProperty('--marker-width', "60px");	//default value
 				}
 
 
@@ -813,7 +816,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 						var max_rot_time = this._config.max_rot_time;
 						var max_power = this._config.max_power_value;
 						if (power_val == 0 || !isNumeric(power_val) || !isNumeric(min_rot_time) || !isNumeric(max_rot_time) || !isNumeric(max_power)) {
-							this._elements.wheel_marker.style.animationDuration = 0;
+							this._elements.wheel_marker.style.animationDuration = 0 + "s";
 						} else {
 							if (power_val > max_power) {power_val = max_power;}
 							var calc_wheel_speed = (max_rot_time + min_rot_time * power_val / max_power) - (max_rot_time * power_val / max_power);
@@ -828,6 +831,12 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				this._elements.wheel_window.style.display = "none";
 			}
 			
+			//set scale
+			if (this._config.scale == 100 || this._config.scale == '' || this._config.scale == undefined || !isNumeric(this._config.scale)) {
+				this._elements.counter_div.style.transform = "scale(100%)";
+			} else {
+				this._elements.counter_div.style.transform = "scale(" + this._config.scale + "%)";
+			}
 			
 			
             this._elements.error.classList.add("osumc-error--hidden");
@@ -842,9 +851,31 @@ class OldStyleUtilityMeterCard extends HTMLElement {
     }*/
 
     // configuration defaults
-    /*static getStubConfig() {
-        return { entity: "sun.sun" }
-    }*/
+    static getStubConfig() {
+        return {
+			entity: "",
+			name: "Energy meter",
+			show_name: true,
+			whole_digit_number: 99,
+			decimal_digit_number: 99,
+			decimal_separator: "Point",
+			markings: true,
+			random_shift: 0,
+			offset: 0,
+			icon: "mdi:lightning-bolt",
+			unit: "",
+			show_wheel: true,
+			marker_width: 60,
+			speed_control_mode: "Fixed",
+			wheel_speed: 4,
+			max_power_value: 10,
+			min_rot_time: 1,
+			max_rot_time: 20,
+			font: "Carlito",
+			font_size: 26,
+			scale: 100,
+		}
+    }
 
 	static getConfigForm() {
 	
@@ -855,7 +886,8 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			{ name: "show_name", selector: { boolean: {} } },
 			{ name: "whole_digit_number", selector: { number: { min: 0, max: 10, step: 1, mode: "slider" } } },
 			{ name: "decimal_digit_number", selector: { number: { min: 0, max: 5, step: 1, mode: "slider" } } },
-			{ name: "decimal_separator", selector: { select: { mode: "list", options: ["Point", "Comma", "None"] } } },
+			{ name: "scale", required: true, selector: { number: { min: 25, max: 200, step: 5, mode: "slider" } } },
+			{ name: "decimal_separator", selector: { select: { mode: "list", options: ["Point", "Comma", "Colon", "None"] } } },
 			{ name: "markings", selector: { boolean: {} } },
 			{ name: "random_shift", selector: { number: { min: 0, max: 2, step: 1, mode: "slider" } } },
 			{ name: "offset", selector: { number: { step: "any", mode: "box" } } },
@@ -943,6 +975,8 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 					return "Duration of a single rotation at lowest speed (in seconds, minimum 0.1). See Readme for deeper explanation.";
 				case "max_power_value":
 					return "Maximum expected value of the above entity, at which the wheel will rotate at max speed. See Readme for deeper explanation.";
+				case "scale":
+					return "Set the scale of the counter (default = 100%). In case you have too many digits that you want to display and the counter doesn't fit into card. Or if you want to make the counter bigger.";
 			}
 			return undefined;
 		},
@@ -953,11 +987,15 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			}
 
 			if (!config.entity || typeof config.entity !== "string") {
-				throw new Error('Configuration error: "entity" must be a non-empty string.');
+				//throw new Error('Configuration error: "entity" must be a non-empty string.');
 			}
 
-			if (config.speed_range_low !== undefined && isNaN(Number(config.speed_range_low))) {
-				throw new Error('Configuration error: "speed_range_low" must be a valid number.');
+			if (config.min_rot_time !== undefined && isNaN(Number(config.min_rot_time))) {
+				throw new Error('Configuration error: "min_rot_time" must be a valid number.');
+			}
+			
+			if (config.max_rot_time !== undefined && isNaN(Number(config.max_rot_time))) {
+				throw new Error('Configuration error: "max_rot_time" must be a valid number.');
 			}
 
 
@@ -972,12 +1010,10 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			if (config.show_wheel == false) {
 				w = getSchIndex(sch, 'speed_control_mode');
 				sch.schema[w].disabled = true;
-				sch.schema[w].visible = false;
 				w = getSchIndex(sch, 'marker_width');
 				sch.schema[w].disabled = true;
 				w = getSchIndex(sch, 'wheel_speed');
 				sch.schema[w].disabled = true;
-				sch.schema[w].hide = true;
 				w = getSchIndex(sch, 'power_entity');
 				sch.schema[w].disabled = true;
 				w = getSchIndex(sch, 'max_power_value');
