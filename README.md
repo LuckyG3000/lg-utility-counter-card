@@ -110,7 +110,7 @@ The calculation formula for this mode is the following:
 
 > rotation_time = ((3600 / rot_time_per_kwh) \* 1000) / power_val
 
-**Important mote:** If your Power sensor reports the power value in kW instead of W, multiply the above value by 1000, e.g.
+**Important note:** If your Power sensor reports the power value in kW instead of W, multiply the above value by 1000, e.g.
 ```
 rot_time_per_kwh: 75000
 ```
