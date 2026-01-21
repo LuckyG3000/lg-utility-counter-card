@@ -110,7 +110,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			entityId = this._config['entity_' + (target)];
 		}
 		
-		if (entityId == undefined || entityId == '') {
+		if (entityId === undefined || entityId === '') {
 			return;
 		}		
 			
@@ -580,7 +580,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 
 
 	doUpdateHass() {
-		if (!this.getState() || this._config.entity == '' || this._config.entity == undefined || typeof this._config.entity !== "string") {
+		if (!this.getState() || this._config.entity === '' || this._config.entity === undefined || typeof this._config.entity !== "string") {
 			this._elements.error.textContent = `${this.getEntityID()} is unavailable.`;
 			this._elements.error.classList.remove("osumc-error--hidden");
 		} else if ((this._config.power_entity == '' || typeof this._config.power_entity !== "string") && (this._config.speed_control_mode == 'Power' || this._config.speed_control_mode == 'Realistic')) {
@@ -698,7 +698,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 							if (random_pos && this._config['random_shift' + suffix] !== undefined && this._config['random_shift' + suffix] > 0) {
 								this._elements.digit[i * 15 + d].style.top = Math.round(Math.random() * 2 * this._config['random_shift' + suffix] - this._config['random_shift' + suffix]) + "px";
 							}
-							if (this._config['random_shift' + suffix] == '' || this._config['random_shift' + suffix] == undefined || this._config['random_shift' + suffix] == 0) {
+							if (this._config['random_shift' + suffix] === '' || this._config['random_shift' + suffix] === undefined || this._config['random_shift' + suffix] == 0) {
 								this._elements.digit[i * 15 + d].style.top = 0;
 							}
 							
