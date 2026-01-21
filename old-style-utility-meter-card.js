@@ -2,7 +2,7 @@
 *                                                            *
 *                Old Style Utility Meter Card                *
 *                       by LuckyG3000                        *
-*                           v1.3.0                           *
+*                           v1.3.1                           *
 * https://github.com/LuckyG3000/old-style-utility-meter-card *
 *           GNU GENERAL PUBLIC LICENSE version 3.0           *
 *                                                            *
@@ -632,8 +632,19 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 						r_str = "0";
 					}
 					
-					var digits_left = this._config['whole_digit_number' + suffix] || 99;
-					var digits_right = this._config['decimal_digit_number' + suffix] || 99;
+					var digits_left;
+					var digits_right;
+					
+					if (this._config['whole_digit_number' + suffix] === undefined || this._config['whole_digit_number' + suffix] === '') {
+						digits_left = 99;
+					} else {
+						digits_left = this._config['whole_digit_number' + suffix];
+					}
+					if (this._config['decimal_digit_number' + suffix] === undefined || this._config['decimal_digit_number' + suffix] === '') {
+						digits_right = 99;
+					} else {
+						digits_right = this._config['decimal_digit_number' + suffix];
+					}
 					
 					if (digits_left == 99) {	//auto
 						digits_left = l_str.length;
