@@ -4,6 +4,7 @@
 Old Style Utility Meter Card for Home Assistant
 
 Customizable Utility Meter Card based on old style (non digital) utility meter box with rotating digits and an animated spinning wheel :new:.<br/>
+The card supports now up to 9 independent counters!<br/>
 This picture does a better job than describing it with words:
 
 ![Old Style Utility Meter Card](https://github.com/LuckyG3000/old-style-utility-meter-card/blob/main/imgs/wheel_animation.webp?raw=true)
@@ -33,7 +34,6 @@ scale: 100
 decimal_separator: Comma
 icon: mdi:lightning-bolt
 random_shift: 2
-colors: User defined
 font_url: Carlito
 font_size: 24px
 markings: true
@@ -51,6 +51,7 @@ marker_width: 75
 max_power_value: 10
 max_rot_time: 20
 min_rot_time: 1
+rot_time_per_kwh: 75
 unit: kWh
 plate_color: "#1B1B1B"
 name_color: "#f00"
@@ -75,17 +76,17 @@ Most of these options are pretty straightforward a don't need any explanation. Y
 
 Select the mode for speed config:
 ```
-speed_control_mode: fixed | power
+speed_control_mode: Fixed | Power | Realistic
 ```
 
-In **```fixed```** mode you set only the speed:
+In **```Fixed```** mode you set only the speed:
 ```
 wheel_speed: 2
 ```
 
 The number can be set in range 0 - 20 with 0.1 steps, where 0 means the wheel rotation will be disabled, any other number is **the time of a single rotation in seconds**. That means the lower the number, the faster will the wheel spin.
 
-In **```power```** mode you must set the **```power_entity```** and the values for transforming the value of sensor to rotation time.
+In **```Power```** mode you must set the **```power_entity```** and the values for transforming the value of sensor to rotation time.
 
 **```power_entity: sensor.my_power_meter_3000_power```** - this is the entity providing the source value for wheel speed
 
@@ -97,7 +98,42 @@ In **```power```** mode you must set the **```power_entity```** and the values f
 
 The formula for calculating the rotation time from these values is the following:
 
-> rotation_time = (max_rot_time + min_rot_time \* power_val / max_power_value) - (max_rot_time \* power_val / max_power_value);
+> rotation_time = (max_rot_time + min_rot_time \* power_val / max_power_value) - (max_rot_time \* power_val / max_power_value)
+
+
+The **```Realistic```** mode is similar to **```Power```** mode, but uses a simplified calculation formula, for more realistic outcome.
+You have to set the **```power_entity```** and the number of rotations per consumed kWh (or any other unit your sensor gives):
+```
+rot_time_per_kwh: 75
+```
+The calculation formula for this mode is the following:
+
+> rotation_time = ((3600 / rot_time_per_kwh) \* 1000) / power_val
+
+**Important mote:** If your Power sensor reports the power value in kW instead of W, multiply the above value by 1000, e.g.
+```
+rot_time_per_kwh: 75000
+```
+Credit for the Realistic mode goes to [@Khodrin](https://github.com/Khodrin), thank you!
+
+
+### Adding more counters
+You can add more counters to your card (up to 9 in total). The visual editor doesn't support this yet, you have to specify them in YAML (code editor).<br/>
+Options for additional counters have to end with a number suffix, e.g. ```_2``` for second counter, ```_3``` for third etc.
+Example for adding a second counter:
+```
+entity_2: sensor.smart_plug_kitchen_energy
+whole_digit_number_2: 5
+decimal_digit_number_2: 2
+scale_2: 100
+decimal_separator_2: Comma
+icon_2: mdi:lightning-bolt
+random_shift_2: 2
+markings_2: true
+show_name_2: true
+name_2: Kitchen Counter Energy Consumption
+decimal_plate_color_2: "#eebb11"
+```
 
 # Examples
 
@@ -113,7 +149,13 @@ The formula for calculating the rotation time from these values is the following
 
 ![Example 6](https://github.com/LuckyG3000/old-style-utility-meter-card/blob/main/imgs/example-4.png?raw=true)
 
-![Example 7](https://github.com/LuckyG3000/old-style-utility-meter-card/blob/main/imgs/screenshot.png?raw=true)
+![Example 7 - Card with two counters](https://github.com/LuckyG3000/old-style-utility-meter-card/blob/main/imgs/example-5.png?raw=true)
+
+![Example 8 - Card with two counters, both with their names](https://github.com/LuckyG3000/old-style-utility-meter-card/blob/main/imgs/example-6.png?raw=true)
+
+![Example 9 - Card with four counters](https://github.com/LuckyG3000/old-style-utility-meter-card/blob/main/imgs/example-7.png?raw=true)
+
+![Example 10](https://github.com/LuckyG3000/old-style-utility-meter-card/blob/main/imgs/screenshot.png?raw=true)
 
 # Installation
 

@@ -2,11 +2,13 @@
 *                                                            *
 *                Old Style Utility Meter Card                *
 *                       by LuckyG3000                        *
-*                           v1.2.0                           *
+*                           v1.3.0                           *
 * https://github.com/LuckyG3000/old-style-utility-meter-card *
 *           GNU GENERAL PUBLIC LICENSE version 3.0           *
 *                                                            *
 **************************************************************/
+
+const MAX_COUNTERS = 9;
 
 function loadCSS(url, id) {
 	const link = document.createElement("link");
@@ -80,7 +82,6 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 	}
 
 	onClicked() {
-		//this.doToggle();
 		const event = new CustomEvent("hass-action", {
 			detail: {
 				config: this._config,
@@ -92,6 +93,40 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 		this.dispatchEvent(event);
 	}
 	
+	
+	onClicked1(target) {
+		/* target:
+		0 = power_entity
+		1, 2, 3... = counter entities
+		*/
+		
+		var entityId;
+
+		if (target == 0) {
+			entityId = this._config['power_entity'];
+		} else if (target == 1) {
+			entityId = this._config['entity'];
+		} else {
+			entityId = this._config['entity_' + (target)];
+		}
+		
+		if (entityId == undefined || entityId == '') {
+			return;
+		}		
+			
+		const event = new Event("hass-more-info", {
+			bubbles: true,
+			composed: true,
+		});
+
+		event.detail = {
+			entityId: entityId,
+			view: 'info',
+		};
+		
+		this.dispatchEvent(event);
+	}
+
 	
 	getHeader() {
 		return this._config.header;
@@ -125,8 +160,8 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 		return {
 			rows: 3,
 			columns: 12,
-			min_rows: 3,
-			max_rows: 3,
+			min_rows: 1,
+			//max_rows: 3,
 		};
 	}
 
@@ -148,11 +183,11 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 		this._elements.style = document.createElement("style");
 		this._elements.style.textContent = `
 			:root {
-				--marker-width: 60px;
+				--marker-width: 80px;
 			}
 			
 			.card-content {
-				cursor: pointer;
+				/*cursor: pointer;*/
 			}
 
 			.osumc-error {
@@ -163,13 +198,14 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			}
 
 			.osumc-name {
-				margin-bottom: 10px;
+				margin-bottom: 4px;
 			}
 
 			.osumc-counter-div {
 				width: min-content;
 				white-space: nowrap;
-				margin: 0 auto;
+				margin: 0 auto 10px;
+				cursor: pointer;
 			}
 			
 					
@@ -254,9 +290,11 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				font-size: 18px;
 				font-weight: bold;
 				font-family: Carlito, sans-serif;
+				border-top-right-radius: 3px;
+				border-bottom-right-radius: 3px;
 			}
 
-			#osumc-decimal-point {
+			.osumc-decimal-point {
 				position: absolute;
 				top: -1px;
 				display: inline-block;
@@ -331,11 +369,12 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			.osumc-wheel-window {
 				width: 90%;
 				height: 21px;
-				margin: 20px auto;
+				margin: 16px auto 0;
 				text-align: center;
 				display: block;
 				font-size: 0;
 				white-space: nowrap;
+				cursor: pointer;
 			}
 
 			.osumc-wheel-window-border {
@@ -436,19 +475,24 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			<div class="card-content">
 				<p class="osumc-error osumc-error--hidden">
 				<br><br>
-				<div class="osumc-name"></div>
-				<div class="osumc-counter-div">
+				`;
+				
+				//create counters
+			for (var i = 0; i < MAX_COUNTERS; i++) {
+				html_content += `
+				<div class="osumc-name" id="osumc-` + i + `"></div>
+				<div class="osumc-counter-div" id="osumc-` + i + `">
 					<div class="osumc-icon-div">
-						<ha-icon icon="mdi:flash" id="osumc-icon"></ha-icon>
+						<ha-icon icon="mdi:flash" class="osumc-icon"></ha-icon>
 					</div><div class="osumc-integer-div">
 						`;
-			for (var d = 0; d < 15; d++) {
-				html_content += `<span class="osumc-digit-window">
+				for (var d = 0; d < 15; d++) {
+					html_content += `<span class="osumc-digit-window">
 							<span class="osumc-digit-text" id="osumc-digit-` + d + `">0</span>
 						</span>`;
-			}
-			html_content += `
-						<div id="osumc-decimal-point"></div>
+				}
+				html_content += `
+						<div class="osumc-decimal-point"></div>
 						<div class="osumc-line_cont">
 							<div class="osumc-line"></div>
 							<div class="osumc-line"></div>
@@ -462,6 +506,10 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 						</div>
 					</div><div class="osumc-red-bg"></div><div class="osumc-grey-bg"></div>
 				</div>
+				`;
+			}
+			
+			html_content += `				
 				<div class="osumc-wheel-window">
 					<div class="osumc-wheel-window-left">
 						<div class="osumc-wheel-window-left-border"></div>
@@ -489,19 +537,21 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 		this._elements.error = card.querySelector(".osumc-error")
 
 		this._elements.card_content = card.querySelector(".card-content")
+	
+		this._elements.name = card.querySelectorAll(".osumc-name");
+		this._elements.counter_div = card.querySelectorAll(".osumc-counter-div");
+		this._elements.integer_div = card.querySelectorAll(".osumc-integer-div");
 
-		this._elements.name = card.querySelector(".osumc-name");
-
-		this._elements.counter_div = card.querySelector(".osumc-counter-div");
-		this._elements.integer_div = card.querySelector(".osumc-integer-div");
+		this._elements.redbg = card.querySelectorAll(".osumc-red-bg");
+		this._elements.greybg = card.querySelectorAll(".osumc-grey-bg");
+		this._elements.dp = card.querySelectorAll(".osumc-decimal-point");
+		this._elements.icon_div = card.querySelectorAll(".osumc-icon-div");
+		this._elements.icon = card.querySelectorAll(".osumc-icon");
+		this._elements.markings = card.querySelectorAll(".osumc-line_cont");
+		
 		this._elements.digit_window = card.querySelectorAll(".osumc-digit-window");
 		this._elements.digit = card.querySelectorAll(".osumc-digit-text");
-		this._elements.redbg = card.querySelector(".osumc-red-bg");
-		this._elements.greybg = card.querySelector(".osumc-grey-bg");
-		this._elements.dp = card.querySelector("#osumc-decimal-point");
-		this._elements.icon_div = card.querySelector(".osumc-icon-div");
-		this._elements.icon = card.querySelector("#osumc-icon");
-		this._elements.markings = card.querySelector(".osumc-line_cont");
+		
 
 		this._elements.wheel_window = card.querySelector(".osumc-wheel-window");
 		this._elements.wheel = card.querySelector(".osumc-wheel");
@@ -511,7 +561,10 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 	}
 
 	doListen() {
-		this._elements.card_content.addEventListener("click", this.onClicked.bind(this), false);
+		//this._elements.card_content.addEventListener("click", this.onClicked.bind(this), false);
+		this._elements.counter_div[0].addEventListener("click", this.onClicked1.bind(this, 1), false);
+		this._elements.counter_div[1].addEventListener("click", this.onClicked1.bind(this, 2), false);
+		this._elements.wheel_window.addEventListener("click", this.onClicked1.bind(this, 0), false);
 	}
 
 	doUpdateConfig() {
@@ -522,6 +575,9 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 		}
 	}
 
+
+
+
 	doUpdateHass() {
 		if (!this.getState() || this._config.entity == '' || this._config.entity == undefined || typeof this._config.entity !== "string") {
 			this._elements.error.textContent = `${this.getEntityID()} is unavailable.`;
@@ -531,249 +587,281 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			this._elements.error.classList.remove("osumc-error--hidden");
 		} else {
 			this._elements.error.textContent = "";
-
-			var cntr_val = parseFloat(this.getState().state);
-			if (isNumeric(this._config.offset)) {
-				cntr_val += parseFloat(this._config.offset);
-			}
-
-			var l_str;
-			var r_str;
-			if (String(cntr_val).indexOf(".") > 0) {
-				l_str = String(cntr_val).split(".")[0];
-				r_str = String(cntr_val).split(".")[1];
-			} else {
-				l_str = String(cntr_val);
-				r_str = "0";
-			}
 			
-			var digits_left = this._config.whole_digit_number;
-			var digits_right = this._config.decimal_digit_number;
-			
-			if (digits_left == 99) {	//auto
-				digits_left = l_str.length;
-				if (digits_left > 10) {digits_left = 10;}
-			}
-
-			if (digits_right == 99) {	//auto
-				digits_right = r_str.length;
-				if (digits_right > 5) {
-					digits_right = 5;
-					r_str = r_str.slice(0, 5);
-				}
-			}
-			
-			var total_digits = digits_left + digits_right;
-			
-			if (total_digits > 0) {
-				this._elements.integer_div.style.display = "inline-block";
-			} else {
-				this._elements.integer_div.style.display = "none";
-			}
-			
-			l_str = l_str.padStart(digits_left, '0');	//add leading zeros
-			l_str = l_str.slice(-digits_left);		// cut the beginning of the string if it's longer than required number of digits
-			if (digits_right > 0) {
-				r_str = r_str.padEnd(digits_right, '0');
-			}
-			
-			if (r_str.length > digits_right) {	//do rounding
-			  r_str = String(Math.round(parseInt(r_str) / Math.pow(10, r_str.length - digits_right)));
-			}
-			
-			var cntr_str = l_str + r_str;
-			var dig_val;
-
-			var ts = Math.floor(Date.now() / 1000);
-			var random_pos = false;
-			if (this._elements.lu.innerHTML < ts - 60 || this._elements.lu.innerHTML == '') {
-				random_pos = true;
-				this._elements.lu.innerHTML = ts;
-			}
-			
-			var markings_offset = 0;
-			
-			for (var d = 0; d < total_digits; d++) {
-				dig_val = cntr_str.substring(d, d + 1);
-				this._elements.digit[d].innerHTML = dig_val;
-				this._elements.digit_window[d].style.display = "inline-block";
-				if (random_pos && this._config.random_shift !== undefined && this._config.random_shift > 0) {
-					this._elements.digit[d].style.top = Math.round(Math.random() * 2 * this._config.random_shift - this._config.random_shift) + "px";
-				}
-				if (this._config.random_shift == '' || this._config.random_shift == undefined || this._config.random_shift == 0) {
-					this._elements.digit[d].style.top = 0;
-				}
-				
-				//if markings are enabled, make the last window wider
-				//markings_offset = 0;
-				if (this._config.markings && d == (total_digits - 1)) {
-					this._elements.digit_window[d].style.width = "24px";
-					markings_offset = 6;	//move other elements by this number of pixels to the right
-				} else {
-					this._elements.digit_window[d].style.removeProperty('width');
-				}
-			}
-			//hide the rest of digits
-			for (var d = total_digits; d < 15; d++) {
-				this._elements.digit_window[d].style.display = "none";
-			}
-			//this._elements.redbg.style.left = ((30 * digits_left) + 5) + "px";
-			this._elements.redbg.style.width = (30 * digits_right + (markings_offset * (digits_right > 0))) + "px";
-			this._elements.redbg.style.left = ((-30 * digits_right) + 5 - markings_offset) + "px"; //"-61px";
-			this._elements.greybg.style.left = this._elements.redbg.style.left;
-			//this._elements.greybg.style.left = ((30 * digits_left) + 5 + (30 * digits_right) + markings_offset) + "px";
-			
-			this._elements.markings.style.left = ((30 * total_digits) - 13) + "px";
-			
-			
-			if (this._config.show_name) {
-				this._elements.name.style.display = "block";
-				if (this._config.name == '' || this._config.name == undefined) {
-					this._elements.name.innerHTML = this.getName();
-				} else {
-					this._elements.name.innerHTML = this._config.name;
-				}
-				if (this._config.name_color != undefined && this._config.name_color != '') {
-					this._elements.name.style.color = this._config.name_color;
-				}
-			} else {
-				this._elements.name.style.display = "none";
-			}
-
-			var icon_w = 39;
-			if (this._config.icon != undefined) {
-				this._elements.icon.setAttribute("icon", this._config.icon);
-				this._elements.icon_div.style.display = "inline-block";
-			} else {
-				this._elements.icon_div.style.display = "none";
-				icon_w = 0;
-			}
-			
-			var unitOfMeasurement = this.getState().attributes.unit_of_measurement;
-			if (this._config.unit != undefined && String(this._config.unit).length > 0) {		//if unit is configured in Card's config, use it instead of entity's unit_of_measurement
-				unitOfMeasurement = this._config.unit;
-			}
-			this._elements.greybg.innerHTML = unitOfMeasurement;
-
-			if (this._config.unit == "0") {
-				this._elements.greybg.style.display = "none";
-			} else {
-				this._elements.greybg.style.display = "inline-block";
-			}
-			
-			
-			//counter_div.width = icon_div.width + integer_div.width + redbg.width + markings_offset + greybg.width + greybg.padding (2x6)
-			var greybg_w = this._elements.greybg.getBoundingClientRect().width;
-			if (greybg_w > 0) {greybg_w += 12;}	//add padding width
-			this._elements.counter_div.style.width = icon_w + (30 * digits_left) + (30 * digits_right + (markings_offset * (digits_right > 0))) + greybg_w + "px";
-	
-			
-
-			if (this._config.decimal_separator == "Point") {
-				this._elements.dp.innerHTML = ".";
-			} else if (this._config.decimal_separator == "Comma") {
-				this._elements.dp.innerHTML = ",";
-			} else if (this._config.decimal_separator == "Colon") {
-				this._elements.dp.innerHTML = ":";
-			} else {
-				this._elements.dp.innerHTML = "";
-			}
-			this._elements.dp.style.left = ((30 * digits_left) - 1) + "px";
-			if (digits_right == 0) {
-				this._elements.dp.style.display = "none";
-			} else {
-				this._elements.dp.style.display = "inline-block";
-			}
-			
-			
-
-			if (this._config.plate_color != undefined && this._config.plate_color != '') {
-				this._elements.card_content.style.backgroundColor = this._config.plate_color;
-			}
-			
-			if (this._config.integer_plate_color != undefined && this._config.integer_plate_color != '') {
-				this._elements.integer_div.style.backgroundColor = this._config.integer_plate_color;
-			}
-			
-			if (this._config.decimal_plate_color != undefined && this._config.decimal_plate_color != '') {
-				this._elements.redbg.style.backgroundColor = this._config.decimal_plate_color;
-			}
-			
-			if (this._config.unit_plate_color != undefined && this._config.unit_plate_color != '') {
-				this._elements.greybg.style.backgroundColor = this._config.unit_plate_color;
-			}
-			
-			if (this._config.unit_color != undefined && this._config.unit_color != '') {
-				this._elements.greybg.style.color = this._config.unit_color;
-			}
-			
-			if (this._config.digit_color != undefined && this._config.digit_color != '') {
-				for (var d = 0; d < total_digits; d++) {
-					this._elements.digit[d].style.backgroundImage = "linear-gradient(rgba(64,64,64,1), " + this._config.digit_color + ", rgba(64,64,64,1))";
-				}
-			}
-			
-			if (this._config.digit_bg_color != undefined && this._config.digit_bg_color != '') {
-				for (var d = 0; d < total_digits; d++) {
-					this._elements.digit_window[d].style.background = this._config.digit_bg_color;
-				}
-			}
-			
+			//load / unload webfont
 			if (this._config.font == undefined) {
 				unloadCSS("osumc-webfont");
-				for (var d = 0; d < total_digits; d++) {
-					this._elements.digit[d].style.fontFamily = "inherit";
-				}
 			} else {
 				if (this._config.font == 'Carlito') {
 					loadCSS("https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400&display=swap", "osumc-webfont");
-					for (var d = 0; d < total_digits; d++) {
-						this._elements.digit[d].style.fontFamily = "Carlito";
-					}
-				//} else if (this._config.font.slice(0,4) == 'http') {
-				//	loadCSS(this._config.font, "osumc-webfont");
 				} else {
 					unloadCSS("osumc-webfont");
+				}
+			}
+			
+			if (this._config.plate_color != undefined && this._config.plate_color != '') {
+				this._elements.card_content.style.backgroundColor = this._config.plate_color;
+			}
+
+			for (var i = 0; i < MAX_COUNTERS; i++) {
+				//var cntr_val = parseFloat(this.getState().state);
+				
+				var suffix = '';
+				if (i > 0) {
+					suffix = '_' + (i + 1);
+				}
+				
+				if (this._config['entity' + suffix] == undefined || this._config['entity' + suffix] == '') {
+					this._elements.counter_div[i].style.display = "none";
+				} else {
+				
+					var cntr_val = parseFloat(this._hass.states[this._config['entity' + suffix]].state);
+					
+					if (isNumeric(this._config['offset' + suffix])) {
+						cntr_val += parseFloat(this._config['offset' + suffix]);
+					}
+					
+					var l_str;
+					var r_str;
+					if (String(cntr_val).indexOf(".") > 0) {
+						l_str = String(cntr_val).split(".")[0];
+						r_str = String(cntr_val).split(".")[1];
+					} else {
+						l_str = String(cntr_val);
+						r_str = "0";
+					}
+					
+					var digits_left = this._config['whole_digit_number' + suffix] || 99;
+					var digits_right = this._config['decimal_digit_number' + suffix] || 99;
+					
+					if (digits_left == 99) {	//auto
+						digits_left = l_str.length;
+						if (digits_left > 10) {digits_left = 10;}
+					}
+
+					if (digits_right == 99) {	//auto
+						digits_right = r_str.length;
+						if (digits_right > 5) {
+							digits_right = 5;
+							r_str = r_str.slice(0, 5);
+						}
+					}
+					
+					var total_digits = digits_left + digits_right;
+					
+					if (total_digits > 0) {
+						this._elements.integer_div[i].style.display = "inline-block";
+					} else {
+						this._elements.integer_div[i].style.display = "none";
+					}
+					
+					l_str = l_str.padStart(digits_left, '0');	//add leading zeros
+					l_str = l_str.slice(-digits_left);		// cut the beginning of the string if it's longer than required number of digits
+					if (digits_right > 0) {
+						r_str = r_str.padEnd(digits_right, '0');
+					}
+					
+					if (r_str.length > digits_right) {	//do rounding
+					  r_str = String(Math.round(parseInt(r_str) / Math.pow(10, r_str.length - digits_right)));
+					}
+					
+					var cntr_str = l_str + r_str;
+
+					var dig_val;
+
+					var ts = Math.floor(Date.now() / 1000);
+					var random_pos = false;
+					if (this._elements.lu.innerHTML < ts - 60 || this._elements.lu.innerHTML == '') {
+						random_pos = true;
+						this._elements.lu.innerHTML = ts;
+					}
+					
+					var markings_offset = 0;
+					
+					if (this._elements.digit) {
+						for (var d = 0; d < total_digits; d++) {
+							dig_val = cntr_str.substring(d, d + 1);
+							this._elements.digit[(i * 15) + d].innerHTML = dig_val;
+							this._elements.digit_window[i * 15 + d].style.display = "inline-block";
+							if (random_pos && this._config['random_shift' + suffix] !== undefined && this._config['random_shift' + suffix] > 0) {
+								this._elements.digit[i * 15 + d].style.top = Math.round(Math.random() * 2 * this._config['random_shift' + suffix] - this._config['random_shift' + suffix]) + "px";
+							}
+							if (this._config['random_shift' + suffix] == '' || this._config['random_shift' + suffix] == undefined || this._config['random_shift' + suffix] == 0) {
+								this._elements.digit[i * 15 + d].style.top = 0;
+							}
+							
+							//if markings are enabled, make the last window wider
+							if (this._config['markings' + suffix] && d == (total_digits - 1)) {
+								this._elements.digit_window[i * 15 + d].style.width = "24px";
+								markings_offset = 6;	//move other elements by this number of pixels to the right
+							} else {
+								this._elements.digit_window[i * 15 + d].style.removeProperty('width');
+							}
+						}
+					}
+					//hide the rest of digits
+					for (var d = total_digits; d < 15; d++) {
+						this._elements.digit_window[i * 15 + d].style.display = "none";
+					}
+					this._elements.redbg[i].style.width = (30 * digits_right + (markings_offset * (digits_right > 0))) + "px";
+					this._elements.redbg[i].style.left = ((-30 * digits_right) + 5 - markings_offset) + "px";
+					this._elements.greybg[i].style.left = this._elements.redbg[i].style.left;
+					
+					this._elements.markings[i].style.left = ((30 * total_digits) - 13) + "px";
+					
+					
+					if (this._config['show_name' + suffix] == true) {
+						this._elements.name[i].style.display = "block";
+						if (this._config['name' + suffix] == '' || this._config['name' + suffix] == undefined) {
+							this._elements.name[i].innerHTML = this._hass.states[this._config['entity' + suffix]].attributes.friendly_name;
+						} else {
+							this._elements.name[i].innerHTML = this._config['name' + suffix];
+						}
+						if (this._config['name_color' + suffix] != undefined && this._config['name_color' + suffix] != '') {
+							this._elements.name[i].style.color = this._config['name_color' + suffix];
+						}
+					} else {
+						this._elements.name[i].style.display = "none";
+					}
+					
+					
+					var icon_w = 39;
+					if (this._config['icon' + suffix] != undefined) {
+						this._elements.icon[i].setAttribute("icon", this._config['icon' + suffix]);
+						this._elements.icon_div[i].style.display = "inline-block";
+					} else {
+						this._elements.icon_div[i].style.display = "none";
+						icon_w = 0;
+					}
+					
+					var unitOfMeasurement = this.getState().attributes.unit_of_measurement;
+					if (this._config['unit' + suffix] != undefined && String(this._config['unit' + suffix]).length > 0) {		//if unit is configured in Card's config, use it instead of entity's unit_of_measurement
+						unitOfMeasurement = this._config['unit' + suffix];
+					}
+					this._elements.greybg[i].innerHTML = unitOfMeasurement;
+
+					if (this._config['unit' + suffix] == "0") {
+						this._elements.greybg[i].style.display = "none";
+					} else {
+						this._elements.greybg[i].style.display = "inline-block";
+					}
+					
+					
+					//counter_div.width = icon_div.width + integer_div.width + redbg.width + markings_offset + greybg.width + greybg.padding (2x6)
+					var greybg_w = this._elements.greybg[i].getBoundingClientRect().width;
+					if (greybg_w > 0) {greybg_w += 12;}	//add padding width
+					this._elements.counter_div[i].style.width = icon_w + (30 * digits_left) + (30 * digits_right + (markings_offset * (digits_right > 0))) + greybg_w + "px";
+			
+					
+
+					if (this._config['decimal_separator' + suffix] == "Point" || this._config['decimal_separator' + suffix] == undefined) {
+						this._elements.dp[i].innerHTML = ".";
+					} else if (this._config['decimal_separator' + suffix] == "Comma") {
+						this._elements.dp[i].innerHTML = ",";
+					} else if (this._config['decimal_separator' + suffix] == "Colon") {
+						this._elements.dp[i].innerHTML = ":";
+					} else {
+						this._elements.dp[i].innerHTML = "";
+					}
+					this._elements.dp[i].style.left = ((30 * digits_left) - 1) + "px";
+					if (digits_right == 0) {
+						this._elements.dp[i].style.display = "none";
+					} else {
+						this._elements.dp[i].style.display = "inline-block";
+					}
+					
+					
+					if (this._config['integer_plate_color' + suffix] != undefined && this._config['integer_plate_color' + suffix] != '') {
+						this._elements.integer_div[i].style.backgroundColor = this._config['integer_plate_color' + suffix];
+					}
+					
+					if (this._config['decimal_plate_color' + suffix] != undefined && this._config['decimal_plate_color' + suffix] != '') {
+						this._elements.redbg[i].style.backgroundColor = this._config['decimal_plate_color' + suffix];
+					}
+					
+					if (this._config['unit_plate_color' + suffix] != undefined && this._config['unit_plate_color' + suffix] != '') {
+						this._elements.greybg[i].style.backgroundColor = this._config['unit_plate_color' + suffix];
+					}
+					
+					if (this._config['unit_color' + suffix] != undefined && this._config['unit_color' + suffix] != '') {
+						this._elements.greybg[i].style.color = this._config['unit_color' + suffix];
+					}
+					
+					if (this._config['digit_color' + suffix] != undefined && this._config['digit_color' + suffix] != '') {
+						for (var d = 0; d < total_digits; d++) {
+							this._elements.digit[i * 15 + d].style.backgroundImage = "linear-gradient(rgba(64,64,64,1), " + this._config['digit_color' + suffix] + ", rgba(64,64,64,1))";
+						}
+					}
+					
+					if (this._config['digit_bg_color' + suffix] != undefined && this._config['digit_bg_color' + suffix] != '') {
+						for (var d = 0; d < total_digits; d++) {
+							this._elements.digit_window[i * 15 + d].style.background = this._config['digit_bg_color' + suffix];
+						}
+					}
+					
+					if (this._config.font == undefined) {
+						for (var d = 0; d < total_digits; d++) {
+							this._elements.digit[i * 15 + d].style.fontFamily = "inherit";
+						}
+					} else {
+						if (this._config.font == 'Carlito') {
+							for (var d = 0; d < total_digits; d++) {
+								this._elements.digit[i * 15 + d].style.fontFamily = "Carlito";
+							}
+						} else {
+							for (var d = 0; d < total_digits; d++) {
+								this._elements.digit[i * 15 + d].style.fontFamily = "inherit";
+							}
+						}
+					}
+					
 					for (var d = 0; d < total_digits; d++) {
-						this._elements.digit[d].style.fontFamily = "inherit";
+						if (this._config.font_size == undefined) {
+							this._elements.digit[i * 15 + d].style.fontSize = "26px";
+						} else {
+							this._elements.digit[i * 15 + d].style.fontSize = this._config.font_size + "px";
+						}
+					}
+					
+					
+					if (this._config['decimal_separator_color' + suffix] != undefined && this._config['decimal_separator_color' + suffix] != '') {
+						this._elements.dp[i].style.color = this._config['decimal_separator_color' + suffix];
+					}
+					
+					if (this._config['icon_color' + suffix] != undefined && this._config['icon_color' + suffix] != '') {
+						this._elements.icon[i].style.color = this._config['icon_color' + suffix];
+					}
+					
+					if (this._config['icon_background_color' + suffix] != undefined && this._config['icon_background_color' + suffix] != '') {
+						this._elements.icon_div[i].style.backgroundColor = this._config['icon_background_color' + suffix];
+					}
+					
+					if (this._config['decimal_separator_color' + suffix] != undefined && this._config['decimal_separator_color' + suffix] != '') {
+						this._elements.dp[i].style.color = this._config['decimal_separator_color' + suffix];
+					}
+					
+					if (this._config['markings' + suffix]) {
+						this._elements.markings[i].style.display = "block";
+					} else {
+						this._elements.markings[i].style.display = "none";
+					}
+					
+					if (this._config['markings_color' + suffix] != undefined && this._config['markings_color' + suffix] != '') {
+						this._elements.markings[i].style.color = this._config['markings_color' + suffix];
+					}
+					
+					
+					
+					//set scale
+					if (this._config['scale' + suffix] == 100 || this._config['scale' + suffix] == '' || this._config['scale' + suffix] == undefined || !isNumeric(this._config['scale' + suffix])) {
+						this._elements.counter_div[i].style.transform = "scale(100%)";
+					} else {
+						this._elements.counter_div[i].style.transform = "scale(" + this._config['scale' + suffix] + "%)";
 					}
 				}
 			}
 			
-			for (var d = 0; d < total_digits; d++) {
-				if (this._config.font_size == undefined) {
-					this._elements.digit[d].style.fontSize = "26px";
-				} else {
-					this._elements.digit[d].style.fontSize = this._config.font_size + "px";
-				}
-			}
 			
-			
-			if (this._config.decimal_separator_color != undefined && this._config.decimal_separator_color != '') {
-				this._elements.dp.style.color = this._config.decimal_separator_color;
-			}
-			
-			if (this._config.icon_color != undefined && this._config.icon_color != '') {
-				this._elements.icon.style.color = this._config.icon_color;
-			}
-			
-			if (this._config.icon_background_color != undefined && this._config.icon_background_color != '') {
-				this._elements.icon_div.style.backgroundColor = this._config.icon_background_color;
-			}
-			
-			if (this._config.decimal_separator_color != undefined && this._config.decimal_separator_color != '') {
-				this._elements.dp.style.color = this._config.decimal_separator_color;
-			}
-			
-			if (this._config.markings) {
-				this._elements.markings.style.display = "block";
-			} else {
-				this._elements.markings.style.display = "none";
-			}
-			
-			if (this._config.markings_color != undefined && this._config.markings_color != '') {
-				this._elements.markings.style.color = this._config.markings_color;
-			}
 			
 			if (this._config.show_wheel) {
 				//show the main <div> element with wheel
@@ -796,7 +884,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 					//also set the variable used for calculation in animation
 					r.style.setProperty('--marker-width', this._config.marker_width + "px");
 				} else {
-					r.style.setProperty('--marker-width', "60px");	//default value
+					r.style.setProperty('--marker-width', "80px");	//default value
 				}
 
 
@@ -844,16 +932,9 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				this._elements.wheel_window.style.display = "none";
 			}
 			
-			//set scale
-			if (this._config.scale == 100 || this._config.scale == '' || this._config.scale == undefined || !isNumeric(this._config.scale)) {
-				this._elements.counter_div.style.transform = "scale(100%)";
-			} else {
-				this._elements.counter_div.style.transform = "scale(" + this._config.scale + "%)";
-			}
 			
-			
-            this._elements.error.classList.add("osumc-error--hidden");
-        }
+			this._elements.error.classList.add("osumc-error--hidden");
+		}
     }
 
     /*
@@ -878,7 +959,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 			icon: "mdi:lightning-bolt",
 			unit: "",
 			show_wheel: true,
-			marker_width: 60,
+			marker_width: 80,
 			speed_control_mode: "Fixed",
 			wheel_speed: 4,
 			max_power_value: 10,
@@ -993,7 +1074,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 				case "scale":
 					return "Set the scale of the counter (default = 100%). In case you have too many digits that you want to display and the counter doesn't fit into card. Or if you want to make the counter bigger.";
 				case "rot_time_per_kwh":
-					return "Set the amount of rotations the wheel should complete per used kwh";
+					return "Set the amount of rotations the wheel should complete per used kwh. Default value is 75. If your Power Entity returns kW instead of W, enter the value multiplied by 1000 (75.000).";
 			}
 			return undefined;
 		},
@@ -1110,6 +1191,7 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 }
 
 
+
 function getSchIndex(sch, name) {
 	for (var i = 0; i < sch.schema.length; i++) {
 		if (sch.schema[i].name == name) {
@@ -1125,6 +1207,6 @@ customElements.define("old-style-utility-meter-card", OldStyleUtilityMeterCard);
 window.customCards = window.customCards || [];
 window.customCards.push({
     type: "old-style-utility-meter-card",
-    name: "Old Style Utility Meter Card",
+    name: "Old Style Utility Meter Card DEV",
     description: "A graphical representation of old style utility meter"
 });
