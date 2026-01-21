@@ -562,8 +562,9 @@ class OldStyleUtilityMeterCard extends HTMLElement {
 
 	doListen() {
 		//this._elements.card_content.addEventListener("click", this.onClicked.bind(this), false);
-		this._elements.counter_div[0].addEventListener("click", this.onClicked1.bind(this, 1), false);
-		this._elements.counter_div[1].addEventListener("click", this.onClicked1.bind(this, 2), false);
+		for (var d = 0; d < MAX_COUNTERS; d++) {
+			this._elements.counter_div[d].addEventListener("click", this.onClicked1.bind(this, d+1), false);
+		}
 		this._elements.wheel_window.addEventListener("click", this.onClicked1.bind(this, 0), false);
 	}
 
